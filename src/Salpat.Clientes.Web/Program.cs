@@ -7,11 +7,13 @@ using Salpat.Clientes.Infrastructure;
 using Salpat.Clientes.Infrastructure.Data;
 using Salpat.Clientes.Infrastructure.Email;
 using Salpat.Clientes.UseCases.Contributors.Create;
+using Salpat.Clientes.Web.Components;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using MediatR;
 using Serilog;
 using Serilog.Extensions.Logging;
+using Radzen;
 
 var logger = Log.Logger = new LoggerConfiguration()
   .Enrich.FromLogContext()
@@ -21,6 +23,13 @@ var logger = Log.Logger = new LoggerConfiguration()
 logger.Information("Starting web host");
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddRazorComponents()
+  .AddInteractiveServerComponents()
+  .AddHubOptions(options => options.MaximumReceiveMessageSize = 10 * 1024 * 1024);
+builder.Services.AddControllers();
+builder.Services.AddRadzenComponents();
+builder.Services.AddHttpClient();
 
 builder.Host.UseSerilog((_, config) => config.ReadFrom.Configuration(builder.Configuration));
 var microsoftLogger = new SerilogLoggerFactory(logger)
@@ -75,7 +84,10 @@ app.UseFastEndpoints()
     .UseSwaggerGen(); // Includes AddFileServer and static files middleware
 
 app.UseHttpsRedirection();
-
+app.MapControllers();
+app.UseStaticFiles();
+app.UseAntiforgery();
+app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
 SeedDatabase(app);
 
 app.Run();

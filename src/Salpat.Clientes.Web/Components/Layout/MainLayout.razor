@@ -1,0 +1,77 @@
+@inherits LayoutComponentBase
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject DialogService DialogService
+@inject ContextMenuService ContextMenuService
+@inject TooltipService TooltipService
+@inject NotificationService NotificationService
+<RadzenComponents />
+
+<RadzenLayout style="grid-template-areas: 'rz-sidebar rz-header' 'rz-sidebar rz-body';">
+    <RadzenHeader>
+        <RadzenRow JustifyContent="JustifyContent.Start" AlignItems="AlignItems.Center" Gap="0">
+            <RadzenColumn Size="5">
+                <RadzenSidebarToggle Click="@SidebarToggleClick"></RadzenSidebarToggle>
+            </RadzenColumn>
+            <RadzenColumn Size="7">
+                <RadzenStack AlignItems="AlignItems.Center" Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End"></RadzenStack>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenHeader>
+    <RadzenBody Expanded="@sidebarExpanded">
+        <RadzenRow class="rz-mx-auto rz-px-4 rz-pt-2 rz-pt-md-4 rz-pt-lg-6 rz-pt-xl-12 rz-pb-2 rz-pb-lg-12" Style="max-width: 1440px;">
+            <RadzenColumn Size="12">
+            @Body
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenBody>
+    <RadzenSidebar Expanded="@sidebarExpanded" style="z-index: 2">
+        <RadzenStack AlignItems="Radzen.AlignItems.Center" class="rz-py-4 rz-py-lg-6" Style="padding: var(--rz-panel-menu-item-padding); border-bottom: var(--rz-panel-menu-item-border);">
+            <RadzenImage Path="images/logo_zimat.png"  style="width: 200px; height: 200px;" AlternateText="Application logo"></RadzenImage>
+            <RadzenText Text="ZIMAT.Inventarios.Web" TextStyle="Radzen.Blazor.TextStyle.Subtitle1" class="rz-mb-0" style="color: var(--rz-sidebar-color);" />
+        </RadzenStack>
+        <RadzenPanelMenu>
+            <RadzenPanelMenuItem Text="General" Icon="home">
+                <RadzenPanelMenuItem Text="Inicio" Path="" Icon="account_circle"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Usuarios" Path="products" Icon="account_circle"></RadzenPanelMenuItem>
+            </RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Text="Ventas" Icon="payment">
+                <RadzenPanelMenuItem Text="Clientes" Path="products" Icon="check_circle"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Vendedores" Path="products" Icon="input"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Registro de Ventas" Path="products" Icon="description"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Password" Path="password" Icon="payment"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Numeric" Path="numeric" Icon="aspect_ratio"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="DatePicker" Path="datepicker" Icon="date_range"></RadzenPanelMenuItem>
+            </RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Text="Inventarios" Icon="save">
+                <RadzenPanelMenuItem Text="Catálogo de Artículos y Servicios" Path="articulos" Icon="grid_on"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Unidades" Path="datalist" Icon="list"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Reportes" Path="dropdown" Icon="dns"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Clasificaciones" Path="dropdown-datagrid" Icon="receipt"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="ListBox" Path="listbox" Icon="view_list"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="TemplateForm" Path="templateform" Icon="line_style"></RadzenPanelMenuItem>
+            </RadzenPanelMenuItem>
+            <RadzenPanelMenuItem Text="Compras" Icon="save">
+                <RadzenPanelMenuItem Text="Catálogo de Artículos y Servicios" Path="articulos" Icon="grid_on"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Unidades" Path="datalist" Icon="list"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Reportes" Path="dropdown" Icon="dns"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="Clasificaciones" Path="dropdown-datagrid" Icon="receipt"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="ListBox" Path="listbox" Icon="view_list"></RadzenPanelMenuItem>
+                <RadzenPanelMenuItem Text="TemplateForm" Path="templateform" Icon="line_style"></RadzenPanelMenuItem>
+            </RadzenPanelMenuItem>
+        </RadzenPanelMenu>
+        <RadzenStack AlignItems="Radzen.AlignItems.Center" Gap="0" class="rz-py-4 rz-py-lg-6" Style="padding: var(--rz-panel-menu-item-padding);">
+            <RadzenText Text="ZIMAT.Inventarios.Web v1.0.0" TextStyle="Radzen.Blazor.TextStyle.Caption" TagName="Radzen.Blazor.TagName.P" TextAlign="Radzen.TextAlign.Center" />
+            <RadzenText Text="Copyright Ⓒ 2024" TextStyle="Radzen.Blazor.TextStyle.Caption" class="rz-mb-0" TagName="Radzen.Blazor.TagName.P" TextAlign="Radzen.TextAlign.Center" />
+        </RadzenStack>
+    </RadzenSidebar>
+</RadzenLayout>
+
+@code {
+   bool sidebarExpanded = true;
+
+   void SidebarToggleClick()
+   {
+       sidebarExpanded = !sidebarExpanded;
+   }
+}

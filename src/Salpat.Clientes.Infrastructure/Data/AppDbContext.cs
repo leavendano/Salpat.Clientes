@@ -2,6 +2,7 @@
 using Ardalis.SharedKernel;
 using Salpat.Clientes.Core.ContributorAggregate;
 using Microsoft.EntityFrameworkCore;
+using Salpat.Clientes.Core.Base;
 
 namespace Salpat.Clientes.Infrastructure.Data;
 public class AppDbContext : DbContext
@@ -16,6 +17,7 @@ public class AppDbContext : DbContext
   }
 
   public DbSet<Contributor> Contributors => Set<Contributor>();
+  //public DbSet<Cliente> Cientes => Set<Cliente>();
 
   protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
           => optionsBuilder.UseSnakeCaseNamingConvention();
@@ -28,6 +30,21 @@ public class AppDbContext : DbContext
 
   public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = new CancellationToken())
   {
+
+    var entries = ChangeTracker.Entries<RegisterBase>().
+                 Where(x => x.State == EntityState.Added || x.State == EntityState.Modified);
+
+            foreach (var entityEntry in entries)
+            {
+                entityEntry.Entity.UpdatedAt = DateTime.UtcNow;
+
+                if (entityEntry.State == EntityState.Added)
+                {
+                    entityEntry.Entity.CreatedAt = DateTime.UtcNow;
+                }
+            }
+
+
     int result = await base.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
 
     // ignore events if no dispatcher provided

@@ -1,9 +1,10 @@
 ﻿using Ardalis.GuardClauses;
 using Ardalis.SharedKernel;
+using Salpat.Clientes.Core.Base;
 
 namespace Salpat.Clientes.Core.ContributorAggregate;
 
-public class Contributor(string name) : EntityBase, IAggregateRoot
+public class Contributor(string name) : RegisterBase, IAggregateRoot
 {
   // Example of validating primary constructor inputs
   // See: https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/tutorials/primary-constructors#initialize-base-class

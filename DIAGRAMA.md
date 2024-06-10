@@ -1,16 +1,19 @@
 
 ```mermaid
 erDiagram
-    CUSTOMER ||--o{ ORDER : places
-    CUSTOMER {
-        string name
-        string custNumber
-        string sector
+    CLIENTE ||--o{ ORDER : places
+    CLIENTE {
+        string Nombre
+        string Telefono
+        string Email
     }
-    ORDER ||--|{ LINE-ITEM : contains
-    ORDER {
-        int orderNumber
-        string deliveryAddress
+    TRANSACCION ||--|{ LINE-ITEM : contains
+    TRANSACCION {
+        int id
+        DateTime Fecha
+        decimal Cantidad
+        decimal Importe
+        int PutosGanados
     }
     LINE-ITEM {
         string productCode

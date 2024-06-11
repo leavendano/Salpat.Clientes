@@ -1,7 +1,7 @@
 
 ```mermaid
 erDiagram
-    CLIENTE ||--o{ ORDER : places
+    CLIENTE ||--o{ TRANSACCION : places
     CLIENTE {
         string Nombre
         string Telefono
@@ -13,7 +13,7 @@ erDiagram
         DateTime Fecha
         decimal Cantidad
         decimal Importe
-        int PutosGanados
+        int PuntosGanados
     }
     LINE-ITEM {
         string productCode

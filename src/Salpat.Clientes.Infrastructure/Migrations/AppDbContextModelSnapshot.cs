@@ -22,7 +22,7 @@ namespace Salpat.Clientes.Infrastructure.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Salpat.Clientes.Core.ContributorAggregate.Cliente", b =>
+            modelBuilder.Entity("Salpat.Clientes.Core.ClienteAggregate.Cliente", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -50,6 +50,18 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)")
                         .HasColumnName("nombre");
+
+                    b.Property<int>("PuntosGanados")
+                        .HasColumnType("integer")
+                        .HasColumnName("puntos_ganados");
+
+                    b.Property<int>("PuntosRedimidos")
+                        .HasColumnType("integer")
+                        .HasColumnName("puntos_redimidos");
+
+                    b.Property<decimal>("SumaImporte")
+                        .HasColumnType("numeric")
+                        .HasColumnName("suma_importe");
 
                     b.Property<string>("Telefono")
                         .IsRequired()

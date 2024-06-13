@@ -1,7 +1,7 @@
-using Salpat.Clientes.Core.ContributorAggregate.Events;
 using Salpat.Clientes.Core.Interfaces;
 using MediatR;
 using Microsoft.Extensions.Logging;
+using Salpat.Clientes.Core.ClienteAggregate.Events;
 
 namespace Salpat.Clientes.Core.ContributorAggregate.Handlers;
 

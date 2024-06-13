@@ -1,6 +1,6 @@
 using Ardalis.SharedKernel;
 
-namespace Salpat.Clientes.Core.ContributorAggregate.Events;
+namespace Salpat.Clientes.Core.ClienteAggregate.Events;
 
 /// <summary>
 /// A domain event that is dispatched whenever a contributor is deleted.

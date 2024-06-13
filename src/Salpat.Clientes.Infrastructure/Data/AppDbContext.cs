@@ -3,6 +3,7 @@ using Ardalis.SharedKernel;
 using Salpat.Clientes.Core.ContributorAggregate;
 using Microsoft.EntityFrameworkCore;
 using Salpat.Clientes.Core.Base;
+using Salpat.Clientes.Core.ClienteAggregate;
 
 namespace Salpat.Clientes.Infrastructure.Data;
 public class AppDbContext : DbContext
@@ -17,7 +18,7 @@ public class AppDbContext : DbContext
   }
 
   public DbSet<Contributor> Contributors => Set<Contributor>();
-  //public DbSet<Cliente> Cientes => Set<Cliente>();
+  public DbSet<Cliente> Clientes => Set<Cliente>();
 
   protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
           => optionsBuilder.UseSnakeCaseNamingConvention();

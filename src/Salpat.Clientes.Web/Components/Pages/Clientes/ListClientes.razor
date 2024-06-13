@@ -1,0 +1,137 @@
+@page "/clientes"
+@using Ardalis.Result
+@using Salpat.Clientes.UseCases.Clientes
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject DialogService DialogService
+@inject ContextMenuService ContextMenuService
+@inject TooltipService TooltipService
+@inject NotificationService NotificationService
+@inject ILogger<ListClientes> logger
+@using MediatR
+@inject IMediator  _mediator
+@using Salpat.Clientes.UseCases.Clientes.Delete
+@using Salpat.Clientes.UseCases.Clientes.List
+
+
+
+<PageTitle>Clientes</PageTitle>
+<RadzenStack>
+    <RadzenRow AlignItems="AlignItems.Center">
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenText Text="Usuarios" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                <RadzenButton Icon="add_circle_outline" Text="Nuevo" Click="@AddButtonClick" Variant="Variant.Flat" />
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+      <RadzenColumn SizeMD=12>
+        <RadzenDataGrid @ref="grid0" ColumnWidth="200px"   AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
+            Data="@listado" TItem="ClienteDTO" RowSelect="@EditRow" >
+            <Columns>
+                <RadzenDataGridColumn TItem="ClienteDTO" Property="Id" Title="Id">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ClienteDTO" Property="Nombre" Title="Name">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ClienteDTO" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
+                    <Template Context="cliente">
+
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
+                            Shade="Shade.Lighter" Variant="Variant.Flat"
+                            Click=@(args => GridDeleteButtonClick(args, cliente)) @onclick:stopPropagation="true" />
+                    </Template>
+                </RadzenDataGridColumn>
+            </Columns>
+
+        </RadzenDataGrid>
+
+    </RadzenColumn>
+  </RadzenRow>
+</RadzenStack>
+@code {
+
+    protected IEnumerable<ClienteDTO>? listado;
+
+    protected RadzenDataGrid<ClienteDTO> grid0 = new();
+    protected override async Task OnInitializedAsync()
+    {
+       
+        await base.OnInitializedAsync();
+        Result<IEnumerable<ClienteDTO>> result = await _mediator.Send(new ListClientesQuery(null, null));
+
+        if (result.IsSuccess)
+        {
+            listado = result.Value;
+        }
+
+    }
+
+    protected async Task AddButtonClick(MouseEventArgs args)
+    {
+        await DialogService.OpenAsync<AddCliente>("Agregar Cliente", null);
+        Result<IEnumerable<ClienteDTO>> result = await _mediator.Send(new ListClientesQuery(null, null));
+
+        if (result.IsSuccess)
+        {
+            
+            listado = result.Value;
+            await grid0.Reload();
+        }
+        
+    }
+
+    protected async Task DemoButtonClick(MouseEventArgs args)
+    {
+        await DialogService.OpenAsync<TemplateForm>("Demo", null, new DialogOptions() { Width = $"{900}px", Height = $"{600}px" });
+
+
+    }
+
+    protected async Task EditRow(ClienteDTO args)
+    {
+        await DialogService.OpenAsync<EditProduct>("Editar Cliente", new Dictionary<string, object> { {"Id", args.Id} });
+        Result<IEnumerable<ClienteDTO>> result = await _mediator.Send(new ListClientesQuery(null, null));
+        if (result.IsSuccess)
+        {
+            
+            listado = result.Value;
+            await grid0.Reload();
+        }
+    } 
+
+    protected async Task GridDeleteButtonClick(MouseEventArgs args, ClienteDTO cliente)
+    {
+        try
+        {
+            if (await DialogService.Confirm("Está seguro de borrar este elemento?") == true)
+            {
+               
+               var result = await _mediator.Send(new DeleteClienteCommand(cliente.Id));
+
+                if (result.IsSuccess)
+                {
+                    Result<IEnumerable<ClienteDTO>> result2 = await _mediator.Send(new ListClientesQuery(null, null));
+                    if(result2.IsSuccess)
+                    {
+                        listado = result2.Value;
+                        await grid0.Reload();
+                    }
+                    
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            logger.LogError(0,e,"Error al eliminar un elemento");
+            NotificationService.Notify(new NotificationMessage
+            {
+                Severity = NotificationSeverity.Error,
+                Summary = $"Error",
+                Detail = $"Imposible Eliminar Cliente"
+            });
+        }
+    }
+}

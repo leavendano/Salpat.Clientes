@@ -19,7 +19,7 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     nombre = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    telefono = table.Column<string>(type: "character varying(10)", maxLength: 10, nullable: false),
+                    telefono = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: false),
                     email = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
                     suma_importe = table.Column<decimal>(type: "numeric", nullable: false),
                     puntos_ganados = table.Column<int>(type: "integer", nullable: false),

@@ -10,7 +10,7 @@
 @inject ILogger<ListClientes> logger
 @using MediatR
 @inject IMediator  _mediator
-@using Salpat.Clientes.UseCases.Clientes.Delete
+@using Salpat.Clientes.UseCases.Clientes.Delete´
 @using Salpat.Clientes.UseCases.Clientes.List
 
 
@@ -19,7 +19,7 @@
 <RadzenStack>
     <RadzenRow AlignItems="AlignItems.Center">
         <RadzenColumn Size="12" SizeMD="6">
-            <RadzenText Text="Usuarios" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+            <RadzenText Text="Clientes" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
         </RadzenColumn>
         <RadzenColumn Size="12" SizeMD="6">
             <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
@@ -34,7 +34,11 @@
             <Columns>
                 <RadzenDataGridColumn TItem="ClienteDTO" Property="Id" Title="Id">
                 </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="ClienteDTO" Property="Nombre" Title="Name">
+                <RadzenDataGridColumn TItem="ClienteDTO" Property="Nombre" Title="Nombre">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ClienteDTO" Property="Telefono" Title="Telefono">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ClienteDTO" Property="Email" Title="Email">
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="ClienteDTO" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
                     <Template Context="cliente">
@@ -92,7 +96,7 @@
 
     protected async Task EditRow(ClienteDTO args)
     {
-        await DialogService.OpenAsync<EditProduct>("Editar Cliente", new Dictionary<string, object> { {"Id", args.Id} });
+        await DialogService.OpenAsync<EditCliente>("Editar Cliente", new Dictionary<string, object> { {"Id", args.Id} });
         Result<IEnumerable<ClienteDTO>> result = await _mediator.Send(new ListClientesQuery(null, null));
         if (result.IsSuccess)
         {

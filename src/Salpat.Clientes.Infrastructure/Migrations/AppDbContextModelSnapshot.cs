@@ -65,8 +65,8 @@ namespace Salpat.Clientes.Infrastructure.Migrations
 
                     b.Property<string>("Telefono")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)")
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)")
                         .HasColumnName("telefono");
 
                     b.Property<DateTime>("UpdatedAt")

@@ -12,7 +12,7 @@ using Salpat.Clientes.Infrastructure.Data;
 namespace Salpat.Clientes.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240613165444_Initial")]
+    [Migration("20240614014003_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -68,8 +68,8 @@ namespace Salpat.Clientes.Infrastructure.Migrations
 
                     b.Property<string>("Telefono")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)")
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)")
                         .HasColumnName("telefono");
 
                     b.Property<DateTime>("UpdatedAt")

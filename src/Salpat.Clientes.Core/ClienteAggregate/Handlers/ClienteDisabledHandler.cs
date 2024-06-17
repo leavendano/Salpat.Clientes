@@ -3,15 +3,15 @@ using MediatR;
 using Microsoft.Extensions.Logging;
 using Salpat.Clientes.Core.ClienteAggregate.Events;
 
-namespace Salpat.Clientes.Core.ContributorAggregate.Handlers;
+namespace Salpat.Clientes.Core.ClienteAggregate.Handlers;
 
 /// <summary>
 /// NOTE: Internal because ContributorDeleted is also marked as internal.
 /// </summary>
-internal class ClienteDeletedHandler(ILogger<ClienteDeletedHandler> logger,
-  IEmailSender emailSender) : INotificationHandler<ClienteDeletedEvent>
+internal class ClienteDisabledHandler(ILogger<ClienteDisabledHandler> logger,
+  IEmailSender emailSender) : INotificationHandler<ClienteDisabledEvent>
 {
-  public async Task Handle(ClienteDeletedEvent domainEvent, CancellationToken cancellationToken)
+  public async Task Handle(ClienteDisabledEvent domainEvent, CancellationToken cancellationToken)
   {
     logger.LogInformation("Handling Contributed Deleted event for {contributorId}", domainEvent.ClienteId);
 

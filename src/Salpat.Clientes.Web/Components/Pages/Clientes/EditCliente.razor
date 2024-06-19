@@ -1,28 +1,28 @@
-@page "/add-cliente"
+@page "/edit-cliente"
+@using MediatR
+@using Salpat.Clientes.UseCases.Clientes.Get
+@using Salpat.Clientes.UseCases.Clientes.Update
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 @inject DialogService DialogService
 @inject ContextMenuService ContextMenuService
 @inject TooltipService TooltipService
 @inject NotificationService NotificationService
-@inject ILogger<AddProduct> logger
-@using MediatR
-@using Salpat.Clientes.UseCases.Clientes.Create
-@inject IMediator  _mediator
+@inject IMediator _mediator
 
 
-<PageTitle>Nuevo Cliente</PageTitle>
+<PageTitle>Editar Cliente</PageTitle>
+
     <RadzenColumn SizeMD=12>
-        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save Product</RadzenAlert>
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">No puedo guardar  los datos</RadzenAlert>
         <RadzenTemplateForm TItem="ClienteDTO" Data="@item" Visible="@(item != null)" Submit="@FormSubmit">
-            
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
                     <RadzenLabel Text="Nombre" Component="nombre" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
                     <RadzenTextBox style="display: block; width: 100%" @bind-Value="@item!.Nombre" Name="nombre" />
-                    <RadzenRequiredValidator Component="nombre" Text="descripcion is required" />
+                    <RadzenRequiredValidator Component="nombre" Text="El nombre es requerido" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
@@ -30,7 +30,7 @@
                     <RadzenLabel Text="Telefono" Component="Phone" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
-                    <RadzenMask Mask="(***) ***-****" CharacterPattern="[0-9]" Placeholder="(000) 000-0000" Name="Phone" @bind-Value="@item!.Telefono" Change=@(args => OnChange(args, "Telephone")) 
+                    <RadzenMask Mask="(***) ***-****" CharacterPattern="[0-9]" Placeholder="(000) 000-0000" Name="Phone" @bind-Value="@item!.Telefono" 
         Style="width: 100%;" aria-label="Phone" />
                     <RadzenRequiredValidator Component="Phone" Text="El número telefónico es requerido" />
                 </RadzenColumn>
@@ -56,26 +56,37 @@
 
     protected class ClienteDTO
     {
-        
+        public int Id {get;set;}
         public string Nombre {get; set;} = string.Empty;
-        public string Telefono {get; set;} = string.Empty;
-        public string Email {get;set;} = string.Empty;
+        public string Telefono {get; set;}  = string.Empty;
+        public string Email {get; set;}  = string.Empty;
 
     }
-    protected override void OnInitialized()
+
+    [Parameter]
+    public int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
     {
-            item ??= new();
+        var result = await _mediator.Send(new GetClienteQuery(Id));
+        if (result.IsSuccess)
+        {
+            item.Id = result.Value.Id;
+            item.Nombre = result.Value.Nombre;
+            item.Telefono = result.Value.Telefono;
+            item.Email = result.Value.Email;
+        }
+
     }
     protected bool errorVisible;
-    [SupplyParameterFromForm]
     protected ClienteDTO item {get; set;} = new();
 
     protected async Task FormSubmit()
     {
-        
+
         try
         {
-            var result = await _mediator.Send(new CreateClienteCommand(item.Nombre,item.Telefono,item.Email));
+            var result = await _mediator.Send(new UpdateClienteCommand(item.Id, item.Nombre, item.Telefono, item.Email));
             DialogService.Close(item);
         }
         catch (Exception)
@@ -83,11 +94,6 @@
             errorVisible = true;
         }
         
-    }
-
-    void OnChange(string value, string name)
-    {
-        logger.LogInformation($"{name} se cambió a  {value}");
     }
 
     protected async Task CancelButtonClick(MouseEventArgs args)

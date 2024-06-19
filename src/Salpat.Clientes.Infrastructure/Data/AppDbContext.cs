@@ -4,6 +4,7 @@ using Salpat.Clientes.Core.ContributorAggregate;
 using Microsoft.EntityFrameworkCore;
 using Salpat.Clientes.Core.Base;
 using Salpat.Clientes.Core.ClienteAggregate;
+using Salpat.Clientes.Core.RecompensaAgreggate;
 
 namespace Salpat.Clientes.Infrastructure.Data;
 public class AppDbContext : DbContext
@@ -19,6 +20,7 @@ public class AppDbContext : DbContext
 
   public DbSet<Contributor> Contributors => Set<Contributor>();
   public DbSet<Cliente> Clientes => Set<Cliente>();
+  public DbSet<Recompensa> Recompensas => Set<Recompensa>();
 
   protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
           => optionsBuilder.UseSnakeCaseNamingConvention();

@@ -18,6 +18,10 @@ public class UpdateClienteHandler(IRepository<Cliente> _repository)
 
     existingCliente.UpdateName(request.NuevoNombre!);
 
+    existingCliente.UpdateTelefono(request.NuevoTelefono!);
+
+    existingCliente.UpdateEmail(request.NuevoEmail);
+
     await _repository.UpdateAsync(existingCliente, cancellationToken);
 
     return Result.Success(new ClienteDTO(existingCliente.Id,

@@ -25,7 +25,8 @@ public class MimeKitEmailSender : IEmailSender
 
     using var client = new SmtpClient(); 
     client.Connect(_mailserverConfiguration.Hostname, 
-      _mailserverConfiguration.Port, false);
+      _mailserverConfiguration.Port, true);
+    client.Authenticate("cfdi@infinitummail.com","Dnb49725");
     var message = new MimeMessage();
     message.From.Add(new MailboxAddress(from, from));
     message.To.Add(new MailboxAddress(to, to));

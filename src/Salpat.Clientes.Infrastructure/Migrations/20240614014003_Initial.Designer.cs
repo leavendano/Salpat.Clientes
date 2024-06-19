@@ -12,7 +12,7 @@ using Salpat.Clientes.Infrastructure.Data;
 namespace Salpat.Clientes.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240610165910_Initial")]
+    [Migration("20240614014003_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -24,6 +24,67 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("Salpat.Clientes.Core.ClienteAggregate.Cliente", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(30)
+                        .HasColumnType("character varying(30)")
+                        .HasColumnName("email");
+
+                    b.Property<int>("Estatus")
+                        .HasColumnType("integer")
+                        .HasColumnName("estatus");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasColumnName("nombre");
+
+                    b.Property<int>("PuntosGanados")
+                        .HasColumnType("integer")
+                        .HasColumnName("puntos_ganados");
+
+                    b.Property<int>("PuntosRedimidos")
+                        .HasColumnType("integer")
+                        .HasColumnName("puntos_redimidos");
+
+                    b.Property<decimal>("SumaImporte")
+                        .HasColumnType("numeric")
+                        .HasColumnName("suma_importe");
+
+                    b.Property<string>("Telefono")
+                        .IsRequired()
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)")
+                        .HasColumnName("telefono");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("Usuario")
+                        .HasColumnType("text")
+                        .HasColumnName("usuario");
+
+                    b.HasKey("Id")
+                        .HasName("pk_clientes");
+
+                    b.ToTable("clientes", (string)null);
+                });
 
             modelBuilder.Entity("Salpat.Clientes.Core.ContributorAggregate.Contributor", b =>
                 {

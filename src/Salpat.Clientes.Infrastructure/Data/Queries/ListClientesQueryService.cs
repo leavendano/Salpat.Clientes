@@ -14,7 +14,7 @@ public class ListClintesQueryService(AppDbContext _db) : IListClientesQueryServi
   {
     // NOTE: This will fail if testing with EF InMemory provider!
     var result = await _db.Database.SqlQuery<ClienteDTO>(
-      $"SELECT Id, nombre, telefono  FROM Clientes") // don't fetch other big columns
+      $"SELECT Id, nombre, telefono, email  FROM Clientes") // don't fetch other big columns
       .ToListAsync();
 
     return result;

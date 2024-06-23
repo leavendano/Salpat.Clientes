@@ -1,5 +1,6 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Salpat.Clientes.Core.Base;
 using Salpat.Clientes.Core.ClienteAggregate;
 
 namespace Salpat.Clientes.Infrastructure.Data.Config;
@@ -19,7 +20,7 @@ public class ClinteConfiguration : IEntityTypeConfiguration<Cliente>
     builder.Property(p => p.Email)
         .HasMaxLength(DataSchemaConstants.DEFAULT_EMAIL_LENGTH)
         .IsRequired();
-    
+
   }
 
 

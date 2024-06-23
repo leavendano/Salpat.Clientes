@@ -1,4 +1,4 @@
-using Ardalis.Result;
+﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
 using Salpat.Clientes.Core.Interfaces;
 using MediatR;

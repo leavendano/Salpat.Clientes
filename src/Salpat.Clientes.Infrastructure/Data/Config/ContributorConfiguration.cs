@@ -1,6 +1,7 @@
 ﻿using Salpat.Clientes.Core.ContributorAggregate;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Salpat.Clientes.Core.Base;
 
 namespace Salpat.Clientes.Infrastructure.Data.Config;
 
@@ -18,5 +19,6 @@ public class ContributorConfiguration : IEntityTypeConfiguration<Contributor>
       .HasConversion(
           x => x.Value,
           x => ContributorStatus.FromValue(x));
+
   }
 }

@@ -12,7 +12,7 @@ using Salpat.Clientes.Infrastructure.Data;
 namespace Salpat.Clientes.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240614014003_Initial")]
+    [Migration("20240626195257_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -83,10 +83,18 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                     b.HasKey("Id")
                         .HasName("pk_clientes");
 
+                    b.HasIndex("Email")
+                        .IsUnique()
+                        .HasDatabaseName("ix_clientes_email");
+
+                    b.HasIndex("Telefono")
+                        .IsUnique()
+                        .HasDatabaseName("ix_clientes_telefono");
+
                     b.ToTable("clientes", (string)null);
                 });
 
-            modelBuilder.Entity("Salpat.Clientes.Core.ContributorAggregate.Contributor", b =>
+            modelBuilder.Entity("Salpat.Clientes.Core.ContributorAggregate.Transaccion", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -94,6 +102,10 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                         .HasColumnName("id");
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("integer")
+                        .HasColumnName("cliente_id");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -103,15 +115,21 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                         .HasColumnType("integer")
                         .HasColumnName("estatus");
 
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)")
-                        .HasColumnName("name");
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("fecha");
 
-                    b.Property<int>("Status")
+                    b.Property<int>("HoseDeliveryId")
                         .HasColumnType("integer")
-                        .HasColumnName("status");
+                        .HasColumnName("hose_delivery_id");
+
+                    b.Property<decimal>("Importe")
+                        .HasColumnType("numeric")
+                        .HasColumnName("importe");
+
+                    b.Property<int>("Puntos")
+                        .HasColumnType("integer")
+                        .HasColumnName("puntos");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone")
@@ -122,43 +140,26 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                         .HasColumnName("usuario");
 
                     b.HasKey("Id")
-                        .HasName("pk_contributors");
+                        .HasName("pk_transacciones");
 
-                    b.ToTable("contributors", (string)null);
+                    b.HasIndex("ClienteId")
+                        .HasDatabaseName("ix_transacciones_cliente_id");
+
+                    b.HasIndex("HoseDeliveryId")
+                        .IsUnique()
+                        .HasDatabaseName("ix_transacciones_hose_delivery_id");
+
+                    b.ToTable("transacciones", (string)null);
                 });
 
-            modelBuilder.Entity("Salpat.Clientes.Core.ContributorAggregate.Contributor", b =>
+            modelBuilder.Entity("Salpat.Clientes.Core.ContributorAggregate.Transaccion", b =>
                 {
-                    b.OwnsOne("Salpat.Clientes.Core.ContributorAggregate.PhoneNumber", "PhoneNumber", b1 =>
-                        {
-                            b1.Property<int>("ContributorId")
-                                .HasColumnType("integer")
-                                .HasColumnName("id");
-
-                            b1.Property<string>("CountryCode")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("phone_number_country_code");
-
-                            b1.Property<string>("Extension")
-                                .HasColumnType("text")
-                                .HasColumnName("phone_number_extension");
-
-                            b1.Property<string>("Number")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("phone_number_number");
-
-                            b1.HasKey("ContributorId");
-
-                            b1.ToTable("contributors");
-
-                            b1.WithOwner()
-                                .HasForeignKey("ContributorId")
-                                .HasConstraintName("fk_contributors_contributors_id");
-                        });
-
-                    b.Navigation("PhoneNumber");
+                    b.HasOne("Salpat.Clientes.Core.ClienteAggregate.Cliente", null)
+                        .WithMany()
+                        .HasForeignKey("ClienteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_transacciones_clientes_cliente_id");
                 });
 #pragma warning restore 612, 618
         }

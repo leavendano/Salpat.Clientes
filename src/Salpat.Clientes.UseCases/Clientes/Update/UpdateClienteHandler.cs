@@ -25,6 +25,8 @@ public class UpdateClienteHandler(IRepository<Cliente> _repository)
     await _repository.UpdateAsync(existingCliente, cancellationToken);
 
     return Result.Success(new ClienteDTO(existingCliente.Id,
-      existingCliente.Nombre, existingCliente.Telefono, existingCliente.Email));
+      existingCliente.Nombre, existingCliente.Telefono, existingCliente.Email, existingCliente.SaldoPuntos
+      
+      ));
   }
 }

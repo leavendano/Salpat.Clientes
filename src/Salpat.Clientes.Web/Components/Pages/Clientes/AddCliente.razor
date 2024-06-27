@@ -8,21 +8,22 @@
 @inject ILogger<AddProduct> logger
 @using MediatR
 @using Salpat.Clientes.UseCases.Clientes.Create
+@using Salpat.Clientes.UseCases.Clientes.Get
+@using Ardalis.Result
 @inject IMediator  _mediator
-
+@attribute [Authorize]
 
 <PageTitle>Nuevo Cliente</PageTitle>
     <RadzenColumn SizeMD=12>
-        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">Cannot save Product</RadzenAlert>
-        <RadzenTemplateForm TItem="ClienteDTO" Data="@item" Visible="@(item != null)" Submit="@FormSubmit">
-            
+        <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">@mensajeAlerta</RadzenAlert>
+        <RadzenTemplateForm TItem="ClienteDTO" Data="@item" Visible="@(item != null)" Submit="@FormSubmit"> 
             <RadzenRow style="margin-bottom: 1rem">
                 <RadzenColumn SizeMD="3">
                     <RadzenLabel Text="Nombre" Component="nombre" style="width: 100%" />
                 </RadzenColumn>
                 <RadzenColumn SizeMD="9">
                     <RadzenTextBox style="display: block; width: 100%" @bind-Value="@item!.Nombre" Name="nombre" />
-                    <RadzenRequiredValidator Component="nombre" Text="descripcion is required" />
+                    <RadzenRequiredValidator Component="nombre" Text="El nombre es requerido" />
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
@@ -67,6 +68,7 @@
             item ??= new();
     }
     protected bool errorVisible;
+    protected string mensajeAlerta = "No se guardo el registro";
     [SupplyParameterFromForm]
     protected ClienteDTO item {get; set;} = new();
 
@@ -75,11 +77,27 @@
         
         try
         {
+            var resultTelefono = await _mediator.Send(new GetClienteByTelefonoQuery(item.Telefono));
+            if(resultTelefono.Status != ResultStatus.NotFound)
+            {
+               @*  NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error,
+                 Summary = "El telefono ya existe en la base de datos",
+                  Detail = "Error Detail", Duration = 4000 }); *@
+                mensajeAlerta = "El telefono ya existe en la base de datos";
+                errorVisible = true;
+                return;
+            }
+
             var result = await _mediator.Send(new CreateClienteCommand(item.Nombre,item.Telefono,item.Email));
-            DialogService.Close(item);
+                DialogService.Close(item);
+            
         }
-        catch (Exception)
+        catch (Exception e)
         {
+            NotificationService.Notify(new NotificationMessage { Severity = NotificationSeverity.Error,
+                 Summary = e.Message,
+                  Detail = "Error Detail", Duration = 4000 });
+            mensajeAlerta = "ocurrió un error de la base de datos";
             errorVisible = true;
         }
         

@@ -17,6 +17,6 @@ public class GetClienteHandler(IReadRepository<Cliente> _repository)
     var entity = await _repository.FirstOrDefaultAsync(spec, cancellationToken);
     if (entity == null) return Result.NotFound();
 
-    return new ClienteDTO(entity.Id, entity.Nombre, entity.Telefono, entity.Email);
+    return new ClienteDTO(entity.Id, entity.Nombre, entity.Telefono, entity.Email, entity.SaldoPuntos);
   }
 }

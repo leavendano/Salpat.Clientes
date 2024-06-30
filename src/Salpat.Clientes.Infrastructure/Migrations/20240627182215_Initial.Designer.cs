@@ -12,7 +12,7 @@ using Salpat.Clientes.Infrastructure.Data;
 namespace Salpat.Clientes.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240626195257_Initial")]
+    [Migration("20240627182215_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -94,7 +94,43 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                     b.ToTable("clientes", (string)null);
                 });
 
-            modelBuilder.Entity("Salpat.Clientes.Core.ContributorAggregate.Transaccion", b =>
+            modelBuilder.Entity("Salpat.Clientes.Core.EstacionAggregate.Estacion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("Estatus")
+                        .HasColumnType("integer")
+                        .HasColumnName("estatus");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("nombre");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("Usuario")
+                        .HasColumnType("text")
+                        .HasColumnName("usuario");
+
+                    b.HasKey("Id")
+                        .HasName("pk_estaciones");
+
+                    b.ToTable("estaciones", (string)null);
+                });
+
+            modelBuilder.Entity("Salpat.Clientes.Core.TransaccionAggregate.Transaccion", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -110,6 +146,10 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("created_at");
+
+                    b.Property<int>("EstacionId")
+                        .HasColumnType("integer")
+                        .HasColumnName("estacion_id");
 
                     b.Property<int>("Estatus")
                         .HasColumnType("integer")
@@ -145,6 +185,9 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                     b.HasIndex("ClienteId")
                         .HasDatabaseName("ix_transacciones_cliente_id");
 
+                    b.HasIndex("EstacionId")
+                        .HasDatabaseName("ix_transacciones_estacion_id");
+
                     b.HasIndex("HoseDeliveryId")
                         .IsUnique()
                         .HasDatabaseName("ix_transacciones_hose_delivery_id");
@@ -152,7 +195,7 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                     b.ToTable("transacciones", (string)null);
                 });
 
-            modelBuilder.Entity("Salpat.Clientes.Core.ContributorAggregate.Transaccion", b =>
+            modelBuilder.Entity("Salpat.Clientes.Core.TransaccionAggregate.Transaccion", b =>
                 {
                     b.HasOne("Salpat.Clientes.Core.ClienteAggregate.Cliente", null)
                         .WithMany()
@@ -160,6 +203,13 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
                         .HasConstraintName("fk_transacciones_clientes_cliente_id");
+
+                    b.HasOne("Salpat.Clientes.Core.EstacionAggregate.Estacion", null)
+                        .WithMany()
+                        .HasForeignKey("EstacionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("fk_transacciones_estaciones_estacion_id");
                 });
 #pragma warning restore 612, 618
         }

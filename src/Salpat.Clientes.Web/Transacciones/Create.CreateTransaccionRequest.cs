@@ -11,6 +11,8 @@ public class CreateTransaccionRequest
   [Required]
   public int ClienteId { get; set; }
   [Required]
+  public int EstacionId { get; set; }
+  [Required]
   public DateTime Fecha { get; set; }
   [Required]
   public decimal Importe { get; set; }

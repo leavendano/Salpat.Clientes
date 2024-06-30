@@ -35,16 +35,34 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "estaciones",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    nombre = table.Column<string>(type: "text", nullable: false),
+                    usuario = table.Column<string>(type: "text", nullable: true),
+                    estatus = table.Column<int>(type: "integer", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_estaciones", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "transacciones",
                 columns: table => new
                 {
                     id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     hose_delivery_id = table.Column<int>(type: "integer", nullable: false),
-                    cliente_id = table.Column<int>(type: "integer", nullable: false),
                     fecha = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     importe = table.Column<decimal>(type: "numeric", nullable: false),
                     puntos = table.Column<int>(type: "integer", nullable: false),
+                    cliente_id = table.Column<int>(type: "integer", nullable: false),
+                    estacion_id = table.Column<int>(type: "integer", nullable: false),
                     usuario = table.Column<string>(type: "text", nullable: true),
                     estatus = table.Column<int>(type: "integer", nullable: false),
                     created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
@@ -57,6 +75,12 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                         name: "fk_transacciones_clientes_cliente_id",
                         column: x => x.cliente_id,
                         principalTable: "clientes",
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "fk_transacciones_estaciones_estacion_id",
+                        column: x => x.estacion_id,
+                        principalTable: "estaciones",
                         principalColumn: "id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -79,6 +103,11 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                 column: "cliente_id");
 
             migrationBuilder.CreateIndex(
+                name: "ix_transacciones_estacion_id",
+                table: "transacciones",
+                column: "estacion_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_transacciones_hose_delivery_id",
                 table: "transacciones",
                 column: "hose_delivery_id",
@@ -93,6 +122,9 @@ namespace Salpat.Clientes.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "clientes");
+
+            migrationBuilder.DropTable(
+                name: "estaciones");
         }
     }
 }

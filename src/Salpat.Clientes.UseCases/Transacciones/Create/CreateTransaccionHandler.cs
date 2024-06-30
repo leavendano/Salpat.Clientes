@@ -12,7 +12,7 @@ public class CreateTransaccionHandler(IRepository<Transaccion> _repository, IRep
   public async Task<Result<int>> Handle(CreateTransaccionCommand request,
     CancellationToken cancellationToken)
   {
-    var newTransaccion = new Transaccion(request.HoseDeliveryId,request.ClienteId,request.Fecha,request.Importe,(int)request.Importe);
+    var newTransaccion = new Transaccion(request.HoseDeliveryId,request.ClienteId,request.EstacionId,request.Fecha,request.Importe,(int)request.Importe);
     try{
       var existingCliente = await _repoClientes.GetByIdAsync(request.ClienteId, cancellationToken);
       if (existingCliente != null)

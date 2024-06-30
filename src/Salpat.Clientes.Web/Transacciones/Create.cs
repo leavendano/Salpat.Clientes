@@ -29,7 +29,7 @@ public class Create(IMediator _mediator)
     CancellationToken cancellationToken)
   {
     var result = await _mediator.Send(new CreateTransaccionCommand(request.HoseDeliveryId,
-      request.ClienteId,request.Fecha,request.Importe,(int)request.Importe), cancellationToken);
+      request.ClienteId,request.EstacionId,request.Fecha,request.Importe,(int)request.Importe), cancellationToken);
   
     if (result.IsSuccess)
     {

@@ -1,6 +1,8 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Salpat.Clientes.Core.ClienteAggregate;
+using Salpat.Clientes.Core.ContributorAggregate;
+using Salpat.Clientes.Core.TransaccionAggregate;
 
 namespace Salpat.Clientes.Infrastructure.Data.Config;
 
@@ -8,6 +10,8 @@ public class ClinteConfiguration : IEntityTypeConfiguration<Cliente>
 {
   public void Configure(EntityTypeBuilder<Cliente> builder)
   {
+    
+
     builder.Property(p => p.Nombre)
         .HasMaxLength(DataSchemaConstants.DEFAULT_NAME_LENGTH)
         .IsRequired();
@@ -19,7 +23,13 @@ public class ClinteConfiguration : IEntityTypeConfiguration<Cliente>
     builder.Property(p => p.Email)
         .HasMaxLength(DataSchemaConstants.DEFAULT_EMAIL_LENGTH)
         .IsRequired();
-    
+
+    builder.HasMany<Transaccion>()
+        .WithOne();
+
+    builder.HasIndex(c => c.Telefono).IsUnique();
+    builder.HasIndex(c => c.Email).IsUnique();
+
   }
 
 

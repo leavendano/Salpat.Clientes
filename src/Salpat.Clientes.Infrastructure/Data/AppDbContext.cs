@@ -1,10 +1,10 @@
 ﻿using System.Reflection;
 using Ardalis.SharedKernel;
-using Salpat.Clientes.Core.ContributorAggregate;
 using Microsoft.EntityFrameworkCore;
 using Salpat.Clientes.Core.Base;
 using Salpat.Clientes.Core.ClienteAggregate;
-using Salpat.Clientes.Core.RecompensaAgreggate;
+using Salpat.Clientes.Core.EstacionAggregate;
+using Salpat.Clientes.Core.TransaccionAggregate;
 
 namespace Salpat.Clientes.Infrastructure.Data;
 public class AppDbContext : DbContext
@@ -18,9 +18,10 @@ public class AppDbContext : DbContext
     _dispatcher = dispatcher;
   }
 
-  public DbSet<Contributor> Contributors => Set<Contributor>();
   public DbSet<Cliente> Clientes => Set<Cliente>();
-  public DbSet<Recompensa> Recompensas => Set<Recompensa>();
+  public DbSet<Transaccion> Transacciones => Set<Transaccion>();
+
+  public DbSet<Estacion> Estaciones => Set<Estacion>();
 
   protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
           => optionsBuilder.UseSnakeCaseNamingConvention();

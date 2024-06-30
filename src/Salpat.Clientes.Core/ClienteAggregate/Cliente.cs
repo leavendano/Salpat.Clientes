@@ -1,11 +1,13 @@
+﻿using System.Dynamic;
 using Ardalis.GuardClauses;
 using Ardalis.SharedKernel;
 using Salpat.Clientes.Core.Base;
+using Salpat.Clientes.Core.ContributorAggregate;
 
 
 namespace Salpat.Clientes.Core.ClienteAggregate;
 
-public class Cliente(string nombre, string telefono, string email) : RegisterBase, IAggregateRoot
+public sealed class Cliente(string nombre, string telefono, string email) : RegisterBase, IAggregateRoot
 {
   // Example of validating primary constructor inputs
   // See: https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/tutorials/primary-constructors#initialize-base-class
@@ -15,7 +17,6 @@ public class Cliente(string nombre, string telefono, string email) : RegisterBas
   public decimal SumaImporte { get; private set;} = 0m;
   public int PuntosGanados { get; private set; } = 0;
   public int PuntosRedimidos { get; private set;} = 0;
-
  
   public void UpdateName(string newName)
   {
@@ -46,9 +47,13 @@ public class Cliente(string nombre, string telefono, string email) : RegisterBas
     PuntosRedimidos += Guard.Against.NegativeOrZero(puntos, nameof(puntos));
   }
 
-  public int SaldoPuntos() 
+  public int SaldoPuntos 
   {
-    return PuntosGanados - PuntosRedimidos;
+    get
+    {
+      return PuntosGanados - PuntosRedimidos;
+    }
+    
   }
 }
 

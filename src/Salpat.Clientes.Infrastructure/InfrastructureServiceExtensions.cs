@@ -30,7 +30,7 @@ public static class InfrastructureServiceExtensions
     services.AddScoped<IListContributorsQueryService, ListContributorsQueryService>();
     services.AddScoped<IDeleteContributorService, DeleteContributorService>();
     services.AddScoped<IListClientesQueryService, ListClintesQueryService>();
-    services.AddScoped<IDeleteClienteService, DeleteClienteService>();
+    services.AddScoped<IClienteService, ClienteService>();
 
     services.Configure<MailserverConfiguration>(config.GetSection("Mailserver"));
 

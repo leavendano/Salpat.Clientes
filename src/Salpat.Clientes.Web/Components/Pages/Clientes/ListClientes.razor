@@ -10,9 +10,9 @@
 @inject ILogger<ListClientes> logger
 @using MediatR
 @inject IMediator  _mediator
-@using Salpat.Clientes.UseCases.Clientes.Delete´
+@using Salpat.Clientes.UseCases.Clientes.Delete
 @using Salpat.Clientes.UseCases.Clientes.List
-
+@attribute [Authorize]
 
 
 <PageTitle>Clientes</PageTitle>
@@ -39,6 +39,8 @@
                 <RadzenDataGridColumn TItem="ClienteDTO" Property="Telefono" Title="Telefono">
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="ClienteDTO" Property="Email" Title="Email">
+                </RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ClienteDTO" Property="SaldoPuntos" Title="Puntos">
                 </RadzenDataGridColumn>
                 <RadzenDataGridColumn TItem="ClienteDTO" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
                     <Template Context="cliente">

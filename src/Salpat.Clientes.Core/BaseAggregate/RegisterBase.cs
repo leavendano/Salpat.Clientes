@@ -1,10 +1,10 @@
-using Ardalis.SharedKernel;
+﻿using Ardalis.SharedKernel;
 
 namespace Salpat.Clientes.Core.Base;
 public abstract class RegisterBase : EntityBase
 {
   public string? Usuario { get; set; } = null;
-  public RegisterStatus Estatus { get; set; } = RegisterStatus.Activo;
+  public int Estatus { get; set; } = 1;
         
   public DateTime CreatedAt { get; set; }
         

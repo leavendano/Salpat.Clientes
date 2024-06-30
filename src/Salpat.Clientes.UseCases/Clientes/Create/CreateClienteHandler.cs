@@ -1,5 +1,6 @@
 ﻿using Ardalis.Result;
 using Ardalis.SharedKernel;
+using Microsoft.EntityFrameworkCore;
 using Salpat.Clientes.Core.ClienteAggregate;
 
 namespace Salpat.Clientes.UseCases.Clientes.Create;
@@ -11,9 +12,16 @@ public class CreateClienteHandler(IRepository<Cliente> _repository)
     CancellationToken cancellationToken)
   {
     var newCliente = new Cliente(request.Nombre, request.Telefono, request.Email);
-   
-    var createdItem = await _repository.AddAsync(newCliente, cancellationToken);
+    try{
+      var createdItem = await _repository.AddAsync(newCliente, cancellationToken);
+      return createdItem.Id;
+    }
+    catch(DbUpdateException ex)
+    {
+      return Result<int>.Conflict(ex.InnerException?.Message);
+    }
+    
 
-    return createdItem.Id;
+    
   }
 }

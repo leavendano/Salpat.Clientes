@@ -1,12 +1,13 @@
-using Ardalis.Result;
+﻿using Ardalis.Result;
 using FastEndpoints;
 using MediatR;
 using Salpat.Clientes.UseCases.Clientes.Get;
+using Salpat.Clientes.UseCases.Responses;
 
 namespace Salpat.Clientes.Web.Clientes;
 
 public class GetByPhone(IMediator _mediator)
-  : Endpoint<GetClientByPhoneRequest, ClienteRecord>
+  : Endpoint<GetClientByPhoneRequest, ApiResponse<ClienteRecord>>
 {
   public override void Configure()
   {
@@ -29,7 +30,16 @@ public class GetByPhone(IMediator _mediator)
 
     if (result.IsSuccess)
     {
-      Response = new ClienteRecord(result.Value.Id, result.Value.Nombre, result.Value.SaldoPuntos);
+      
+      Response = new ApiResponse<ClienteRecord>
+      {
+        Success = true,
+        Error = "",
+        Data = new List<ClienteRecord>()
+        {
+          new ClienteRecord(result.Value.Id, result.Value.Nombre, result.Value.SaldoPuntos)
+        }
+      };
     }
   }
 }

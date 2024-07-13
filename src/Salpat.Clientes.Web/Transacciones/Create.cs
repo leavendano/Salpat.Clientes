@@ -2,6 +2,7 @@
 using FastEndpoints;
 using MediatR;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Salpat.Clientes.UseCases.Responses;
 
 namespace Salpat.Clientes.Web.Transacciones;
 
@@ -12,7 +13,7 @@ namespace Salpat.Clientes.Web.Transacciones;
 /// Creates a new Transacion.
 /// </remarks>
 public class Create(IMediator _mediator)
-  : Endpoint<CreateTransaccionRequest, CreateTransaccionResponse>
+  : Endpoint<CreateTransaccionRequest, ApiResponse<CreateTransaccionResponse>>
 {
   public override void Configure()
   {
@@ -33,9 +34,25 @@ public class Create(IMediator _mediator)
   
     if (result.IsSuccess)
     {
-      Response = new CreateTransaccionResponse(result.Value, request.HoseDeliveryId,
-          request.ClienteId,request.Fecha,request.Importe,(int)request.Importe);      
+      Response = new ApiResponse<CreateTransaccionResponse>
+      {
+        Success = true,
+        Error = "",
+        Data = new List<CreateTransaccionResponse>()
+        {
+          new CreateTransaccionResponse(result.Value, request.HoseDeliveryId,
+          request.ClienteId,request.Fecha,request.Importe,(int)request.Importe)
+        }
+      };
       return;
+    }
+    else
+    {
+      Response = new ApiResponse<CreateTransaccionResponse>
+      {
+        Success = false,
+        Error = result.Errors.FirstOrDefault() == null ? "" : result.Errors.FirstOrDefault()!
+      };
     }
     // TODO: Handle other cases as necessary
   }

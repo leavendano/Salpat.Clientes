@@ -1,12 +1,10 @@
 ﻿using System.Reflection;
 using Ardalis.ListStartupServices;
 using Ardalis.SharedKernel;
-using Salpat.Clientes.Core.ContributorAggregate;
 using Salpat.Clientes.Core.Interfaces;
 using Salpat.Clientes.Infrastructure;
 using Salpat.Clientes.Infrastructure.Data;
 using Salpat.Clientes.Infrastructure.Email;
-using Salpat.Clientes.UseCases.Contributors.Create;
 using Salpat.Clientes.Web.Components;
 using FastEndpoints;
 using FastEndpoints.Swagger;
@@ -16,9 +14,10 @@ using Serilog.Extensions.Logging;
 using Radzen;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using Microsoft.IdentityModel.Tokens;
 using Salpat.Clientes.Web;
 using System.IdentityModel.Tokens.Jwt;
+using Salpat.Clientes.UseCases.Clientes.Create;
+using Salpat.Clientes.Core.ClienteAggregate;
 
 
 const string MS_OIDC_SCHEME = "MicrosoftOidc";
@@ -57,13 +56,24 @@ builder.Services.AddAuthentication(MS_OIDC_SCHEME)
     options.TokenValidationParameters.NameClaimType = JwtRegisteredClaimNames.Name;
     options.TokenValidationParameters.RoleClaimType = "role";
 
-    options.Events = new OpenIdConnectEvents
+  options.Events = new OpenIdConnectEvents
+  {
+    OnAccessDenied = context =>
     {
-        OnAccessDenied = context =>
+      context.HandleResponse();
+      context.Response.Redirect("/");
+      return Task.CompletedTask;
+    },
+
+        OnRemoteFailure = ctx =>
         {
-            context.HandleResponse();
-            context.Response.Redirect("/");
-            return Task.CompletedTask;
+          if (ctx.Failure?.Message == "Correlation failed.")
+          {
+            ctx.Response.Redirect("/");
+            ctx.HandleResponse();
+          }
+
+          return Task.CompletedTask;
         }
     };
 })
@@ -166,8 +176,8 @@ void ConfigureMediatR()
 {
   var mediatRAssemblies = new[]
 {
-  Assembly.GetAssembly(typeof(Contributor)), // Core
-  Assembly.GetAssembly(typeof(CreateContributorCommand)) // UseCases
+  Assembly.GetAssembly(typeof(Cliente)), // Core
+  Assembly.GetAssembly(typeof(CreateClienteCommand)) // UseCases
 };
   builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssemblies(mediatRAssemblies!));
   builder.Services.AddScoped(typeof(IPipelineBehavior<,>), typeof(LoggingBehavior<,>));

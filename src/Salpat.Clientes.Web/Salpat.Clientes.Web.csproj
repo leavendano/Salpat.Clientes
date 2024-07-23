@@ -6,6 +6,7 @@
     <OutputType>Exe</OutputType>
     <WebProjectMode>true</WebProjectMode>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
   </PropertyGroup>
 
   <ItemGroup>
@@ -26,5 +27,11 @@
     <ProjectReference Include="..\Salpat.Clientes.Infrastructure\Salpat.Clientes.Infrastructure.csproj" />
     <ProjectReference Include="..\Salpat.Clientes.UseCases\Salpat.Clientes.UseCases.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Components\Pages\Recompensas\" />
+    <Folder Include="Components\Pages\Transacciones\" />
+  </ItemGroup>
+  
 
 </Project>

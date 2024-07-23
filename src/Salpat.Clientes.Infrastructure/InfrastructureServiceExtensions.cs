@@ -5,12 +5,12 @@ using Salpat.Clientes.Core.Services;
 using Salpat.Clientes.Infrastructure.Data;
 using Salpat.Clientes.Infrastructure.Data.Queries;
 using Salpat.Clientes.Infrastructure.Email;
-using Salpat.Clientes.UseCases.Contributors.List;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Salpat.Clientes.UseCases.Clientes.List;
+using Salpat.Clientes.UseCases.Transacciones.List;
 
 namespace Salpat.Clientes.Infrastructure;
 public static class InfrastructureServiceExtensions
@@ -27,9 +27,8 @@ public static class InfrastructureServiceExtensions
 
     services.AddScoped(typeof(IRepository<>), typeof(EfRepository<>));
     services.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
-    services.AddScoped<IListContributorsQueryService, ListContributorsQueryService>();
-    services.AddScoped<IDeleteContributorService, DeleteContributorService>();
     services.AddScoped<IListClientesQueryService, ListClintesQueryService>();
+    services.AddScoped<IListTransaccionesQueryService, ListTransaccionesQueryService>();
     services.AddScoped<IClienteService, ClienteService>();
 
     services.Configure<MailserverConfiguration>(config.GetSection("Mailserver"));

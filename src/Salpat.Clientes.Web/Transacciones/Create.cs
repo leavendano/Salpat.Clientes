@@ -21,7 +21,7 @@ public class Create(IMediator _mediator)
     AllowAnonymous();
     Summary(s =>
     {
-      s.ExampleRequest = new CreateTransaccionRequest { HoseDeliveryId = 0, ClienteId = 0, Fecha = DateTime.Now, Importe = 0};
+      s.ExampleRequest = new CreateTransaccionRequest{ HoseDeliveryId = 0, ClienteId = 0, Fecha = DateTime.Now, Importe = 0};
     });
   }
    
@@ -30,7 +30,8 @@ public class Create(IMediator _mediator)
     CancellationToken cancellationToken)
   {
     var result = await _mediator.Send(new CreateTransaccionCommand(request.HoseDeliveryId,
-      request.ClienteId,request.EstacionId,request.Fecha,request.Importe,(int)request.Importe), cancellationToken);
+      request.ClienteId,request.EstacionId,request.Fecha,request.Importe
+      ,request.Volumen,request.ProductoId,(int)request.Importe), cancellationToken);
   
     if (result.IsSuccess)
     {
@@ -40,8 +41,8 @@ public class Create(IMediator _mediator)
         Error = "",
         Data = new List<CreateTransaccionResponse>()
         {
-          new CreateTransaccionResponse(result.Value, request.HoseDeliveryId,
-          request.ClienteId,request.Fecha,request.Importe,(int)request.Importe)
+          new CreateTransaccionResponse( result.Value.HoseDeliveryId,
+          result.Value.ClienteId,result.Value.Fecha,result.Value.Importe,result.Value.Puntos)
         }
       };
       return;

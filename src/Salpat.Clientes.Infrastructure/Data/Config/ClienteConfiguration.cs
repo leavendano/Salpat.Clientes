@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Salpat.Clientes.Core.ClienteAggregate;
-using Salpat.Clientes.Core.ContributorAggregate;
 using Salpat.Clientes.Core.TransaccionAggregate;
 
 namespace Salpat.Clientes.Infrastructure.Data.Config;

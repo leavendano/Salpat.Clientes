@@ -1,8 +1,7 @@
-﻿using System.Dynamic;
-using Ardalis.GuardClauses;
+﻿using Ardalis.GuardClauses;
 using Ardalis.SharedKernel;
 using Salpat.Clientes.Core.Base;
-using Salpat.Clientes.Core.ContributorAggregate;
+
 
 
 namespace Salpat.Clientes.Core.ClienteAggregate;

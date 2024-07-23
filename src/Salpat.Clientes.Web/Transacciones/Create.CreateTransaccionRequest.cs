@@ -16,4 +16,7 @@ public class CreateTransaccionRequest
   public DateTime Fecha { get; set; }
   [Required]
   public decimal Importe { get; set; }
+  public decimal Volumen {  get; set; }
+  public int ProductoId { get; set; }
+
 }

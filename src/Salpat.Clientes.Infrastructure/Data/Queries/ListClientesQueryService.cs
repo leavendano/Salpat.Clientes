@@ -1,5 +1,4 @@
-using Salpat.Clientes.UseCases.Contributors;
-using Salpat.Clientes.UseCases.Clientes.List;
+﻿using Salpat.Clientes.UseCases.Clientes.List;
 using Microsoft.EntityFrameworkCore;
 using Salpat.Clientes.UseCases.Clientes;
 

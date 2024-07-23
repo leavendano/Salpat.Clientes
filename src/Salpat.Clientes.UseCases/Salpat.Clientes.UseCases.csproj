@@ -10,4 +10,8 @@
     <ProjectReference Include="..\Salpat.Clientes.Core\Salpat.Clientes.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Estaciones\List\" />
+  </ItemGroup>
+
 </Project>

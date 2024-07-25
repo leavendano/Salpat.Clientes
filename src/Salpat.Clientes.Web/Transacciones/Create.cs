@@ -42,7 +42,7 @@ public class Create(IMediator _mediator)
         Data = new List<CreateTransaccionResponse>()
         {
           new CreateTransaccionResponse( result.Value.HoseDeliveryId,
-          result.Value.ClienteId,result.Value.Fecha,result.Value.Importe,result.Value.Puntos)
+          result.Value.ClienteId,result.Value.Fecha,result.Value.ProductoId,result.Value.Importe,result.Value.Volumen,result.Value.Puntos)
         }
       };
       return;

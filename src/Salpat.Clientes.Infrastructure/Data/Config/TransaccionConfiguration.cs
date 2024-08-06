@@ -1,4 +1,4 @@
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Salpat.Clientes.Core.ClienteAggregate;
 using Salpat.Clientes.Core.EstacionAggregate;
@@ -23,7 +23,7 @@ public class TransaccionConfiguration : IEntityTypeConfiguration<Transaccion>
         .WithMany()
         .HasForeignKey(x => x.EstacionId);
 
-    builder.HasIndex(c => c.HoseDeliveryId).IsUnique();
+    builder.HasIndex(c => new { c.EstacionId,c.HoseDeliveryId}).IsUnique();
     
 
   }

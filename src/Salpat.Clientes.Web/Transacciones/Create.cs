@@ -1,8 +1,7 @@
 ﻿using Salpat.Clientes.UseCases.Transacciones.Create;
 using FastEndpoints;
 using MediatR;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Salpat.Clientes.UseCases.Responses;
+using Salpat.Clientes.Core.Base;
 
 namespace Salpat.Clientes.Web.Transacciones;
 
@@ -30,7 +29,7 @@ public class Create(IMediator _mediator)
     CancellationToken cancellationToken)
   {
     var result = await _mediator.Send(new CreateTransaccionCommand(request.HoseDeliveryId,
-      request.ClienteId,request.EstacionId,request.Fecha,request.Importe
+      request.ClienteId,request.EstacionId,request.Posicion,request.Fecha,request.Importe
       ,request.Volumen,request.ProductoId,(int)request.Importe), cancellationToken);
   
     if (result.IsSuccess)

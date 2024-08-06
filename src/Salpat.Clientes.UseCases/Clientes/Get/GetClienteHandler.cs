@@ -8,8 +8,7 @@ namespace Salpat.Clientes.UseCases.Clientes.Get;
 /// <summary>
 /// Queries don't necessarily need to use repository methods, but they can if it's convenient
 /// </summary>
-public class GetClienteHandler(IReadRepository<Cliente> _repository)
-  : IQueryHandler<GetClienteQuery, Result<ClienteDTO>>
+public class GetClienteHandler(IReadRepository<Cliente> _repository) : IQueryHandler<GetClienteQuery, Result<ClienteDTO>>
 {
   public async Task<Result<ClienteDTO>> Handle(GetClienteQuery request, CancellationToken cancellationToken)
   {

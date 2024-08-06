@@ -3,8 +3,10 @@ using Ardalis.SharedKernel;
 using Microsoft.EntityFrameworkCore;
 using Salpat.Clientes.Core.Base;
 using Salpat.Clientes.Core.ClienteAggregate;
+using Salpat.Clientes.Core.ConfiguracionAggregate;
 using Salpat.Clientes.Core.EstacionAggregate;
 using Salpat.Clientes.Core.RecompensaAgreggate;
+using Salpat.Clientes.Core.RedencionAggregate;
 using Salpat.Clientes.Core.TransaccionAggregate;
 
 namespace Salpat.Clientes.Infrastructure.Data;
@@ -23,6 +25,8 @@ public class AppDbContext : DbContext
   public DbSet<Transaccion> Transacciones => Set<Transaccion>();
   public DbSet<Estacion> Estaciones => Set<Estacion>();
   public DbSet<Recompensa> Recompensas => Set<Recompensa>();
+  public DbSet<Redencion> Redenciones => Set<Redencion>();
+  public DbSet<Configuracion> Configuraciones => Set<Configuracion>();
 
   protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
           => optionsBuilder.UseSnakeCaseNamingConvention();

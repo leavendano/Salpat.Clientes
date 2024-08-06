@@ -1,0 +1,114 @@
+﻿@page "/add-redencion"
+@using MediatR
+@using Salpat.Clientes.UseCases.Clientes.Get
+@using Salpat.Clientes.UseCases.Clientes.Update
+@using Salpat.Clientes.UseCases.Recompensas
+@using Salpat.Clientes.UseCases.Recompensas.List
+@using Salpat.Clientes.UseCases.Redenciones.Create
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject DialogService DialogService
+@inject ContextMenuService ContextMenuService
+@inject TooltipService TooltipService
+@inject NotificationService NotificationService
+@inject IMediator _mediator
+@attribute [Authorize]
+
+
+<PageTitle>Redención de puntos</PageTitle>
+
+<RadzenColumn SizeMD=12>
+    <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">No puedo guardar  los datos</RadzenAlert>
+    <RadzenTemplateForm TItem="RedencionDTO" Data="@item" Visible="@(item != null)" Submit="@FormSubmit">
+        <RadzenRow style="margin-bottom: 1rem">
+            <RadzenColumn SizeMD="3">
+                <RadzenLabel Text="Nombre" Component="nombre" style="width: 100%" />
+            </RadzenColumn>
+            <RadzenColumn SizeMD="9">
+                <RadzenTextBox style="display: block; width: 100%" @bind-Value="@item!.NombreCliente" Name="nombre" ReadOnly="true" />
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow style="margin-bottom: 1rem">
+            <RadzenColumn SizeMD="3">
+                <RadzenLabel Text="Recompensa" Component="DropDownRecompensa" style="width: 100%" />
+            </RadzenColumn>
+            <RadzenColumn SizeMD="9">
+                <RadzenDropDown @bind-Value="@item!.RecompensaId" Data=@recompensas TextProperty="@nameof(RecompensaDTO.Descripcion)" ValueProperty="Id"
+                                AllowClear=false Placeholder="Seleccione una recompensa" style="display: block; width: 100%" Name="DropDownRecompensa"
+                                Change="@(args => item!.PuntosRedimidos = recompensas!.Where(x => x.Id == (int)args).First().PuntosRequeridos)"  />
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow style="margin-bottom: 1rem">
+            <RadzenColumn SizeMD="3">
+                <RadzenLabel Text="Puntos" Component="Puntos" style="width: 100%" />
+            </RadzenColumn>
+            <RadzenColumn SizeMD="9">
+                <RadzenNumeric TValue="int" style="display: block; width: 100%" @bind-Value="@item!.PuntosRedimidos" Name="Puntos" ReadOnly="true" />
+            </RadzenColumn>
+        </RadzenRow>
+       
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+            <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Guardar" Variant="Variant.Flat" />
+            <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancelar" Variant="Variant.Flat" Click="@CancelButtonClick" />
+        </RadzenStack>
+    </RadzenTemplateForm>
+</RadzenColumn>
+
+
+@code {
+
+    protected class RedencionDTO
+    {
+        public int ClienteId { get; set; }
+        public string NombreCliente { get; set; } = string.Empty;
+        public int RecompensaId { get; set; }
+        public int PuntosRedimidos { get; set; } = 0;
+
+    }
+
+    [Parameter]
+    public int ClienteId { get; set; }
+    
+
+    IEnumerable<RecompensaDTO>? recompensas { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await _mediator.Send(new GetClienteQuery(ClienteId));
+        if (result.IsSuccess)
+        {
+            item.ClienteId = result.Value.Id;
+            item.NombreCliente = result.Value.Nombre;
+        }
+        var resultRecompensas = await _mediator.Send(new ListRecompensasQuery(null, null));
+        if (resultRecompensas.IsSuccess)
+        {
+            recompensas = resultRecompensas.Value;
+        }
+
+        
+
+    }
+    protected bool errorVisible;
+    protected RedencionDTO item { get; set; } = new();
+
+    protected async Task FormSubmit()
+    {
+
+        try
+        {
+            var result = await _mediator.Send(new CreateRedencionCommand(item.ClienteId,DateTime.UtcNow,item.RecompensaId,item.PuntosRedimidos ));
+            DialogService.Close(item);
+        }
+        catch (Exception)
+        {
+            errorVisible = true;
+        }
+
+    }
+
+    protected async Task CancelButtonClick(MouseEventArgs args)
+    {
+        await Task.Run(() => DialogService.Close(null));
+    }
+}

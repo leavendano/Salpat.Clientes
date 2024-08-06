@@ -1,0 +1,139 @@
+﻿@page "/recompensas"
+
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject DialogService DialogService
+@inject ContextMenuService ContextMenuService
+@inject TooltipService TooltipService
+@inject NotificationService NotificationService
+@inject ILogger<ListRecompensas> logger
+@using MediatR
+@inject IMediator _mediator
+@using Salpat.Clientes.UseCases.Recompensas
+@using Ardalis.Result
+@using Salpat.Clientes.UseCases.Recompensas.Delete
+@using Salpat.Clientes.UseCases.Recompensas.List
+@attribute [Authorize]
+
+
+<PageTitle>Recompensas</PageTitle>
+<RadzenStack>
+    <RadzenRow AlignItems="AlignItems.Center">
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenText Text="Recompensas" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                <RadzenButton Icon="add_circle_outline" Text="Nuevo" Click="@AddButtonClick" Variant="Variant.Flat" />
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn SizeMD=12>
+            <RadzenDataGrid @ref="grid0" ColumnWidth="200px" AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
+                            Data="@listado" TItem="RecompensaDTO" RowSelect="@EditRow">
+                <Columns>
+                    <RadzenDataGridColumn TItem="RecompensaDTO" Property="Id" Title="Id">
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="RecompensaDTO" Property="Descripcion" Title="Descripcion">
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="RecompensaDTO" Property="PuntosRequeridos" Title="Puntos Requeridos">
+                    </RadzenDataGridColumn>
+                   
+                    <RadzenDataGridColumn TItem="RecompensaDTO" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
+                        <Template Context="recompensa">
+
+                            <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
+                                          Shade="Shade.Lighter" Variant="Variant.Flat"
+                                          Click=@(args => GridDeleteButtonClick(args, recompensa)) @onclick:stopPropagation="true" />
+                        </Template>
+                    </RadzenDataGridColumn>
+                </Columns>
+
+            </RadzenDataGrid>
+
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>
+
+@code {
+
+    protected IEnumerable<RecompensaDTO>? listado;
+
+    protected RadzenDataGrid<RecompensaDTO> grid0 = new();
+    protected override async Task OnInitializedAsync()
+    {
+
+        await base.OnInitializedAsync();
+        Result<IEnumerable<RecompensaDTO>> result = await _mediator.Send(new ListRecompensasQuery(null, null));
+
+        if (result.IsSuccess)
+        {
+            listado = result.Value;
+        }
+
+    }
+
+    protected async Task AddButtonClick(MouseEventArgs args)
+    {
+        await DialogService.OpenAsync<AddRecompensa>("Agregar Recompensa", null);
+        Result<IEnumerable<RecompensaDTO>> result = await _mediator.Send(new ListRecompensasQuery(null, null));
+
+        if (result.IsSuccess)
+        {
+
+            listado = result.Value;
+            await grid0.Reload();
+        }
+
+    }
+
+    
+    
+
+    protected async Task EditRow(RecompensaDTO args)
+    {
+        await DialogService.OpenAsync<EditRecompensa>("Editar elemento", new Dictionary<string, object> { { "Id", args.Id } });
+        Result<IEnumerable<RecompensaDTO>> result = await _mediator.Send(new ListRecompensasQuery(null, null));
+        if (result.IsSuccess)
+        {
+
+            listado = result.Value;
+            await grid0.Reload();
+        }
+    }
+
+    protected async Task GridDeleteButtonClick(MouseEventArgs args, RecompensaDTO recompensa)
+    {
+        try
+        {
+            if (await DialogService.Confirm("Está seguro de dar de baja este elemento?") == true)
+            {
+
+                var result = await _mediator.Send(new DeleteRecompensaCommand(recompensa.Id));
+
+                if (result.IsSuccess)
+                {
+                    Result<IEnumerable<RecompensaDTO>> result2 = await _mediator.Send(new ListRecompensasQuery(null, null));
+                    if (result2.IsSuccess)
+                    {
+                        listado = result2.Value;
+                        await grid0.Reload();
+                    }
+
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            logger.LogError(0, e, "Error al dar de baja un elemento");
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = $"Error",
+                    Detail = $"Imposible dar de baja el elemento"
+                });
+        }
+    }
+
+}

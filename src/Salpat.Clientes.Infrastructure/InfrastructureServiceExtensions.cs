@@ -11,6 +11,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Salpat.Clientes.UseCases.Clientes.List;
 using Salpat.Clientes.UseCases.Transacciones.List;
+using Salpat.Clientes.UseCases.Recompensas.List;
+using Salpat.Clientes.UseCases.Estaciones.List;
 
 namespace Salpat.Clientes.Infrastructure;
 public static class InfrastructureServiceExtensions
@@ -29,6 +31,8 @@ public static class InfrastructureServiceExtensions
     services.AddScoped(typeof(IReadRepository<>), typeof(EfRepository<>));
     services.AddScoped<IListClientesQueryService, ListClintesQueryService>();
     services.AddScoped<IListTransaccionesQueryService, ListTransaccionesQueryService>();
+    services.AddScoped<IListRecompensasQueryService, ListRecompensasQueryService>();
+    services.AddScoped<IListEstacionesQueryService, ListEstacionesQueryService>();
     services.AddScoped<IClienteService, ClienteService>();
 
     services.Configure<MailserverConfiguration>(config.GetSection("Mailserver"));

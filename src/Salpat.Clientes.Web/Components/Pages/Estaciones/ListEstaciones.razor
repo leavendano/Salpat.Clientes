@@ -1,0 +1,86 @@
+﻿@page "/estaciones"
+
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject DialogService DialogService
+@inject ContextMenuService ContextMenuService
+@inject TooltipService TooltipService
+@inject NotificationService NotificationService
+@inject ILogger<ListEstaciones> logger
+@using Ardalis.Result
+@using Salpat.Clientes.UseCases.Estaciones
+@using MediatR
+@inject IMediator _mediator
+@using Salpat.Clientes.UseCases.Estaciones.List
+@attribute [Authorize]
+
+<PageTitle>Clientes</PageTitle>
+<RadzenStack>
+    <RadzenRow AlignItems="AlignItems.Center">
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenText Text="Clientes" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn SizeMD=12>
+            <RadzenDataGrid @ref="grid0" ColumnWidth="200px" AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
+                            Data="@listado" TItem="EstacionDTO" RowSelect="@EditRow">
+                <Columns>
+                    <RadzenDataGridColumn TItem="EstacionDTO" Property="Id" Title="Id">
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="EstacionDTO" Property="Nombre" Title="Nombre">
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="EstacionDTO" Property="FactorPuntos" Title="Factor">
+                    </RadzenDataGridColumn>
+                    
+                    
+                </Columns>
+
+            </RadzenDataGrid>
+
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>
+
+@code {
+
+    protected IEnumerable<EstacionDTO>? listado;
+
+    protected RadzenDataGrid<EstacionDTO> grid0 = new();
+    protected override async Task OnInitializedAsync()
+    {
+
+        await base.OnInitializedAsync();
+        Result<IEnumerable<EstacionDTO>> result = await _mediator.Send(new ListEstacionesQuery(null, null));
+
+        if (result.IsSuccess)
+        {
+            listado = result.Value;
+        }
+
+    }
+
+   
+
+  
+
+    protected async Task EditRow(EstacionDTO args)
+    {
+        await DialogService.OpenAsync<EditEstacion>("Editar Estacion", new Dictionary<string, object> { { "Id", args.Id } });
+        Result<IEnumerable<EstacionDTO>> result = await _mediator.Send(new ListEstacionesQuery(null, null));
+        if (result.IsSuccess)
+        {
+
+            listado = result.Value;
+            await grid0.Reload();
+        }
+    }
+
+    
+
+}

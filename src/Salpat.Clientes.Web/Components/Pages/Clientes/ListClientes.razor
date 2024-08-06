@@ -1,6 +1,5 @@
 @page "/clientes"
-@using Ardalis.Result
-@using Salpat.Clientes.UseCases.Clientes
+
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 @inject DialogService DialogService
@@ -8,6 +7,8 @@
 @inject TooltipService TooltipService
 @inject NotificationService NotificationService
 @inject ILogger<ListClientes> logger
+@using Ardalis.Result
+@using Salpat.Clientes.UseCases.Clientes
 @using MediatR
 @inject IMediator  _mediator
 @using Salpat.Clientes.UseCases.Clientes.Delete
@@ -32,22 +33,20 @@
         <RadzenDataGrid @ref="grid0" ColumnWidth="200px"   AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
             Data="@listado" TItem="ClienteDTO" RowSelect="@EditRow" >
             <Columns>
-                <RadzenDataGridColumn TItem="ClienteDTO" Property="Id" Title="Id">
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="ClienteDTO" Property="Nombre" Title="Nombre">
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="ClienteDTO" Property="Telefono" Title="Telefono">
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="ClienteDTO" Property="Email" Title="Email">
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="ClienteDTO" Property="SaldoPuntos" Title="Puntos">
-                </RadzenDataGridColumn>
-                <RadzenDataGridColumn TItem="ClienteDTO" Filterable="false" Sortable="false" Width="70px" TextAlign="TextAlign.Center">
+                <RadzenDataGridColumn TItem="ClienteDTO" Property="Telefono" Title="Telefono" TextAlign="TextAlign.Center"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ClienteDTO" Property="Nombre" Title="Nombre" TextAlign="TextAlign.Left"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ClienteDTO" Property="Email" Title="Email"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ClienteDTO" Property="SaldoPuntos" Width="100px" TextAlign="TextAlign.Center" Title="Puntos"></RadzenDataGridColumn>
+                <RadzenDataGridColumn TItem="ClienteDTO" Filterable="false" Sortable="false" Width="100px" TextAlign="TextAlign.Center">
                     <Template Context="cliente">
+                        <RadzenButton ButtonStyle="ButtonStyle.Success" Icon="shopping_bag" Size="ButtonSize.Medium"
+                                          Shade="Shade.Lighter" Variant="Variant.Flat"
+                                          Click=@(args => GridAddRedentionButtonClick(args, cliente)) @onclick:stopPropagation="true" />
 
-                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="delete" Size="ButtonSize.Medium"
+                        <RadzenButton ButtonStyle="ButtonStyle.Danger" Icon="highlight_off" Size="ButtonSize.Medium"
                             Shade="Shade.Lighter" Variant="Variant.Flat"
                             Click=@(args => GridDeleteButtonClick(args, cliente)) @onclick:stopPropagation="true" />
+
                     </Template>
                 </RadzenDataGridColumn>
             </Columns>
@@ -108,36 +107,50 @@
         }
     } 
 
+
+
     protected async Task GridDeleteButtonClick(MouseEventArgs args, ClienteDTO cliente)
     {
         try
         {
             if (await DialogService.Confirm("Está seguro de borrar este elemento?") == true)
             {
-               
-               var result = await _mediator.Send(new DeleteClienteCommand(cliente.Id));
+
+                var result = await _mediator.Send(new DeleteClienteCommand(cliente.Id));
 
                 if (result.IsSuccess)
                 {
                     Result<IEnumerable<ClienteDTO>> result2 = await _mediator.Send(new ListClientesQuery(null, null));
-                    if(result2.IsSuccess)
+                    if (result2.IsSuccess)
                     {
                         listado = result2.Value;
                         await grid0.Reload();
                     }
-                    
+
                 }
             }
         }
         catch (Exception e)
         {
-            logger.LogError(0,e,"Error al eliminar un elemento");
+            logger.LogError(0, e, "Error al eliminar un elemento");
             NotificationService.Notify(new NotificationMessage
-            {
-                Severity = NotificationSeverity.Error,
-                Summary = $"Error",
-                Detail = $"Imposible Eliminar Cliente"
-            });
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = $"Error",
+                    Detail = $"Imposible Eliminar Cliente"
+                });
+        }
+    }
+
+    protected async Task GridAddRedentionButtonClick(MouseEventArgs args, ClienteDTO cliente)
+    {
+        await DialogService.OpenAsync<AddRedencion>("Registrar Redención", new Dictionary<string, object> { { "ClienteId", cliente.Id } });
+        Result<IEnumerable<ClienteDTO>> result = await _mediator.Send(new ListClientesQuery(null, null));
+        if (result.IsSuccess)
+        {
+
+            listado = result.Value;
+            await grid0.Reload();
         }
     }
 }

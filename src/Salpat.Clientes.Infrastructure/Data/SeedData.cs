@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Salpat.Clientes.Core.ConfiguracionAggregate;
 using Salpat.Clientes.Core.EstacionAggregate;
 
 namespace Salpat.Clientes.Infrastructure.Data;
@@ -16,9 +17,19 @@ public static class SeedData
     using (var dbContext = new AppDbContext(
         serviceProvider.GetRequiredService<DbContextOptions<AppDbContext>>(), null))
     {
-      if (dbContext.Estaciones.Any()) return;   // DB has been seeded
+      if(!dbContext.Estaciones.Any())
+      {
+        PopulateTestData(dbContext);
+      }
 
-      PopulateTestData(dbContext);
+       // DB has been seeded
+      if (!dbContext.Configuraciones.Any())
+      {
+        dbContext.Configuraciones.Add(new Configuracion());
+        dbContext.SaveChanges();
+      }
+
+      
     }
   }
   public static void PopulateTestData(AppDbContext dbContext)

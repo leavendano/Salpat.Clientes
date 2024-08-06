@@ -1,7 +1,7 @@
 ﻿using System.Text.Json.Serialization;
 
 
-namespace Salpat.Clientes.UseCases.Responses;
+namespace Salpat.Clientes.Core.Base;
 
   public class ApiResponse<T> where T : class
   {

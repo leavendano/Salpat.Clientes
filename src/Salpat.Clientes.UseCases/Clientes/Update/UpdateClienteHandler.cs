@@ -5,8 +5,7 @@ using Salpat.Clientes.Core.ClienteAggregate;
 
 namespace Salpat.Clientes.UseCases.Clientes.Update;
 
-public class UpdateClienteHandler(IRepository<Cliente> _repository)
-  : ICommandHandler<UpdateClienteCommand, Result<ClienteDTO>>
+public class UpdateClienteHandler(IRepository<Cliente> _repository) : ICommandHandler<UpdateClienteCommand, Result<ClienteDTO>>
 {
   public async Task<Result<ClienteDTO>> Handle(UpdateClienteCommand request, CancellationToken cancellationToken)
   {

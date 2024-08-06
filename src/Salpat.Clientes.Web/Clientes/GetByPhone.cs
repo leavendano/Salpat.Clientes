@@ -1,8 +1,9 @@
 ﻿using Ardalis.Result;
 using FastEndpoints;
 using MediatR;
+using Salpat.Clientes.Core.Base;
 using Salpat.Clientes.UseCases.Clientes.Get;
-using Salpat.Clientes.UseCases.Responses;
+
 
 namespace Salpat.Clientes.Web.Clientes;
 

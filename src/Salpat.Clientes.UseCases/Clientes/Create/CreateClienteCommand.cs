@@ -1,4 +1,5 @@
 ﻿using Ardalis.Result;
+using Ardalis.SharedKernel;
 
 namespace Salpat.Clientes.UseCases.Clientes.Create;
 
@@ -6,4 +7,4 @@ namespace Salpat.Clientes.UseCases.Clientes.Create;
 /// Create a new Contributor.
 /// </summary>
 /// <param name="Name"></param>
-public record CreateClienteCommand(string Nombre, string Telefono, string Email) : Ardalis.SharedKernel.ICommand<Result<int>>;
+public record CreateClienteCommand(string Nombre, string Telefono, string Email) : ICommand<Result<int>>;

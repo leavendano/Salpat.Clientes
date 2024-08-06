@@ -1,0 +1,97 @@
+﻿@page "/add-recompensa"
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject DialogService DialogService
+@inject ContextMenuService ContextMenuService
+@inject TooltipService TooltipService
+@inject NotificationService NotificationService
+@inject ILogger<AddRecompensa> logger
+@using MediatR
+@using Salpat.Clientes.UseCases.Recompensas.Create
+@using Salpat.Clientes.UseCases.Recompensas.Get
+@using Ardalis.Result
+@inject IMediator _mediator
+@attribute [Authorize]
+
+<PageTitle>Nuevo Cliente</PageTitle>
+<RadzenColumn SizeMD=12>
+    <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">@mensajeAlerta</RadzenAlert>
+    <RadzenTemplateForm TItem="RecompensaDTO" Data="@item" Visible="@(item != null)" Submit="@FormSubmit">
+        <RadzenRow style="margin-bottom: 1rem">
+            <RadzenColumn SizeMD="3">
+                <RadzenLabel Text="Descripción" Component="descripcion" style="width: 100%" />
+            </RadzenColumn>
+            <RadzenColumn SizeMD="9">
+                <RadzenTextBox style="display: block; width: 100%" @bind-Value="@item!.Descripcion" Name="Descripcion" />
+                <RadzenRequiredValidator Component="Descripcion" Text="La Descripción es requerida" />
+            </RadzenColumn>
+        </RadzenRow>
+        <RadzenRow style="margin-bottom: 1rem">
+            <RadzenColumn SizeMD="3">
+                <RadzenLabel Text="Puntos Requeridos" Component="puntos" style="width: 100%" />
+            </RadzenColumn>
+            <RadzenColumn SizeMD="9">
+                <RadzenNumeric TValue="int" style="display: block; width: 100%" Min="1" @bind-Value="@item!.PuntosRequeridos" Name="PuntosRequeridos" />
+                <RadzenRequiredValidator Component="PuntosRequeridos" Text="El valor de los puntos es requerido" />
+            </RadzenColumn>
+        </RadzenRow>
+        
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+            <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Guardar" Variant="Variant.Flat" />
+            <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancelar" Variant="Variant.Flat" Click="@CancelButtonClick" />
+        </RadzenStack>
+    </RadzenTemplateForm>
+</RadzenColumn>
+
+@code {
+
+    protected class RecompensaDTO
+    {
+        public string Descripcion { get; set; } = string.Empty;
+        public int PuntosRequeridos { get; set; }
+    }
+    protected override void OnInitialized()
+    {
+        item ??= new();
+    }
+    protected bool errorVisible;
+    protected string mensajeAlerta = "No se guardo el registro";
+    [SupplyParameterFromForm]
+    protected RecompensaDTO item { get; set; } = new();
+
+    protected async Task FormSubmit()
+    {
+
+        try
+        {
+           
+            var result = await _mediator.Send(new CreateRecompensaCommand(item.Descripcion, item.PuntosRequeridos));
+            DialogService.Close(item);
+
+        }
+        catch (Exception e)
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = e.Message,
+                    Detail = "Error Detail",
+                    Duration = 4000
+                });
+            mensajeAlerta = "ocurrió un error de la base de datos";
+            errorVisible = true;
+        }
+
+    }
+
+    void OnChange(string value, string name)
+    {
+        logger.LogInformation($"{name} se cambió a  {value}");
+    }
+
+    protected async Task CancelButtonClick(MouseEventArgs args)
+    {
+        await Task.Run(() => DialogService.Close(null));
+    }
+
+}

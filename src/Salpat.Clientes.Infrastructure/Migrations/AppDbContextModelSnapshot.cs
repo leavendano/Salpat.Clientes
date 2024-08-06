@@ -91,6 +91,66 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                     b.ToTable("clientes", (string)null);
                 });
 
+            modelBuilder.Entity("Salpat.Clientes.Core.ConfiguracionAggregate.Configuracion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("Estatus")
+                        .HasColumnType("integer")
+                        .HasColumnName("estatus");
+
+                    b.Property<string>("MailAddress")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("mail_address");
+
+                    b.Property<string>("MailHost")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("mail_host");
+
+                    b.Property<string>("MailPassword")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("mail_password");
+
+                    b.Property<string>("MailPort")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("mail_port");
+
+                    b.Property<string>("MailUsername")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("mail_username");
+
+                    b.Property<int>("TiempoMinimoEntreCargas")
+                        .HasColumnType("integer")
+                        .HasColumnName("tiempo_minimo_entre_cargas");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("Usuario")
+                        .HasColumnType("text")
+                        .HasColumnName("usuario");
+
+                    b.HasKey("Id")
+                        .HasName("pk_configuraciones");
+
+                    b.ToTable("configuraciones", (string)null);
+                });
+
             modelBuilder.Entity("Salpat.Clientes.Core.EstacionAggregate.Estacion", b =>
                 {
                     b.Property<int>("Id")
@@ -171,6 +231,53 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                     b.ToTable("recompensas", (string)null);
                 });
 
+            modelBuilder.Entity("Salpat.Clientes.Core.RedencionAggregate.Redencion", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("ClienteId")
+                        .HasColumnType("integer")
+                        .HasColumnName("cliente_id");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("Estatus")
+                        .HasColumnType("integer")
+                        .HasColumnName("estatus");
+
+                    b.Property<DateTime>("Fecha")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("fecha");
+
+                    b.Property<int>("PuntosRedimidos")
+                        .HasColumnType("integer")
+                        .HasColumnName("puntos_redimidos");
+
+                    b.Property<int>("RecompensaId")
+                        .HasColumnType("integer")
+                        .HasColumnName("recompensa_id");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("Usuario")
+                        .HasColumnType("text")
+                        .HasColumnName("usuario");
+
+                    b.HasKey("Id")
+                        .HasName("pk_redenciones");
+
+                    b.ToTable("redenciones", (string)null);
+                });
+
             modelBuilder.Entity("Salpat.Clientes.Core.TransaccionAggregate.Transaccion", b =>
                 {
                     b.Property<int>("Id")
@@ -208,6 +315,10 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                         .HasColumnType("numeric")
                         .HasColumnName("importe");
 
+                    b.Property<int>("Posicion")
+                        .HasColumnType("integer")
+                        .HasColumnName("posicion");
+
                     b.Property<int>("ProductoId")
                         .HasColumnType("integer")
                         .HasColumnName("producto_id");
@@ -234,12 +345,9 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                     b.HasIndex("ClienteId")
                         .HasDatabaseName("ix_transacciones_cliente_id");
 
-                    b.HasIndex("EstacionId")
-                        .HasDatabaseName("ix_transacciones_estacion_id");
-
-                    b.HasIndex("HoseDeliveryId")
+                    b.HasIndex("EstacionId", "HoseDeliveryId")
                         .IsUnique()
-                        .HasDatabaseName("ix_transacciones_hose_delivery_id");
+                        .HasDatabaseName("ix_transacciones_estacion_id_hose_delivery_id");
 
                     b.ToTable("transacciones", (string)null);
                 });

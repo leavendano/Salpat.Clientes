@@ -19,7 +19,7 @@ public class MimeKitEmailSender : IEmailSender
   }
 
 
-  public async Task SendEmailAsync(string to, string from, string subject, string body)
+  public async Task SendEmailAsync(string to, string from, string subject, string textbody, string? htmlbody = null)
   {
     _logger.LogWarning("Sending email to {to} from {from} with subject {subject} using {type}.", to, from, subject, this.ToString());
 
@@ -31,8 +31,14 @@ public class MimeKitEmailSender : IEmailSender
     message.From.Add(new MailboxAddress(from, from));
     message.To.Add(new MailboxAddress(to, to));
     message.Subject = subject;
-    message.Body = new TextPart("plain") { Text = body };
-
+    BodyBuilder emailBodyBuilder = new BodyBuilder();
+    emailBodyBuilder.TextBody = textbody;
+    if(htmlbody != null)
+    {
+      emailBodyBuilder.HtmlBody = htmlbody;
+    }
+   
+    message.Body =emailBodyBuilder.ToMessageBody();
     await client.SendAsync(message);
 
     await client.DisconnectAsync(true, 

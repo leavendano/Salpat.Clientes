@@ -1,3 +1,3 @@
-namespace Salpat.Clientes.UseCases.Recompensas;
+﻿namespace Salpat.Clientes.UseCases.Recompensas;
 
-public record RecompensaDTO(string Descripcion,int PuntosRequeridos);
+public record RecompensaDTO(int Id,string Descripcion,int PuntosRequeridos);

@@ -21,7 +21,7 @@ public class SmtpEmailSender : IEmailSender
     _logger = logger;
   }
 
-  public async Task SendEmailAsync(string to, string from, string subject, string body)
+  public async Task SendEmailAsync(string to, string from, string subject, string body, string? htmlbody = null)
   {
     var emailClient = new SmtpClient(_mailserverConfiguration.Hostname, _mailserverConfiguration.Port);
 

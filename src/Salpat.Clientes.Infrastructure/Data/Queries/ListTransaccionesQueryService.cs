@@ -8,7 +8,7 @@ public class ListTransaccionesQueryService(AppDbContext _db) : IListTransaccione
   public async Task<IEnumerable<TransaccionDTO>> ListAsync()
   {
     var result = await _db.Database.SqlQuery<TransaccionDTO>(
-      $"SELECT Id, nombre, telefono, email, (puntos_ganados - puntos_redimidos) as saldo_puntos  FROM Transacciones") // don't fetch other big columns
+      $"SELECT id,estacion_id, hose_delivery_id, fecha,posicion,producto_id, importe, volumen, cliente_id, puntos  FROM transacciones") // don't fetch other big columns
       .ToListAsync();
 
     return result;

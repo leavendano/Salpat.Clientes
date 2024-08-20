@@ -13,6 +13,7 @@ using Salpat.Clientes.UseCases.Clientes.List;
 using Salpat.Clientes.UseCases.Transacciones.List;
 using Salpat.Clientes.UseCases.Recompensas.List;
 using Salpat.Clientes.UseCases.Estaciones.List;
+using Salpat.Clientes.UseCases.Empresas.List;
 
 namespace Salpat.Clientes.Infrastructure;
 public static class InfrastructureServiceExtensions
@@ -33,6 +34,7 @@ public static class InfrastructureServiceExtensions
     services.AddScoped<IListTransaccionesQueryService, ListTransaccionesQueryService>();
     services.AddScoped<IListRecompensasQueryService, ListRecompensasQueryService>();
     services.AddScoped<IListEstacionesQueryService, ListEstacionesQueryService>();
+    services.AddScoped<IListEmpresasQueryService, ListEmpresasQueryService>();
     services.AddScoped<IClienteService, ClienteService>();
 
     services.Configure<MailserverConfiguration>(config.GetSection("Mailserver"));

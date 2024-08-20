@@ -13,28 +13,6 @@ namespace Salpat.Clientes.Infrastructure.Migrations
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "clientes",
-                columns: table => new
-                {
-                    id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    nombre = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
-                    telefono = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: false),
-                    email = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
-                    suma_importe = table.Column<decimal>(type: "numeric", nullable: false),
-                    puntos_ganados = table.Column<int>(type: "integer", nullable: false),
-                    puntos_redimidos = table.Column<int>(type: "integer", nullable: false),
-                    usuario = table.Column<string>(type: "text", nullable: true),
-                    estatus = table.Column<int>(type: "integer", nullable: false),
-                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("pk_clientes", x => x.id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "configuraciones",
                 columns: table => new
                 {
@@ -54,6 +32,23 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("pk_configuraciones", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "empresas",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    nombre = table.Column<string>(type: "text", nullable: false),
+                    usuario = table.Column<string>(type: "text", nullable: true),
+                    estatus = table.Column<int>(type: "integer", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_empresas", x => x.id);
                 });
 
             migrationBuilder.CreateTable(
@@ -113,6 +108,34 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "clientes",
+                columns: table => new
+                {
+                    id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    nombre = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    telefono = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: false),
+                    email = table.Column<string>(type: "character varying(30)", maxLength: 30, nullable: false),
+                    suma_importe = table.Column<decimal>(type: "numeric", nullable: false),
+                    puntos_ganados = table.Column<int>(type: "integer", nullable: false),
+                    puntos_redimidos = table.Column<int>(type: "integer", nullable: false),
+                    empresa_id = table.Column<int>(type: "integer", nullable: true),
+                    usuario = table.Column<string>(type: "text", nullable: true),
+                    estatus = table.Column<int>(type: "integer", nullable: false),
+                    created_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    updated_at = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("pk_clientes", x => x.id);
+                    table.ForeignKey(
+                        name: "fk_clientes_empresas_empresa_id",
+                        column: x => x.empresa_id,
+                        principalTable: "empresas",
+                        principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "transacciones",
                 columns: table => new
                 {
@@ -156,6 +179,11 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "ix_clientes_empresa_id",
+                table: "clientes",
+                column: "empresa_id");
+
+            migrationBuilder.CreateIndex(
                 name: "ix_clientes_telefono",
                 table: "clientes",
                 column: "telefono",
@@ -193,6 +221,9 @@ namespace Salpat.Clientes.Infrastructure.Migrations
 
             migrationBuilder.DropTable(
                 name: "estaciones");
+
+            migrationBuilder.DropTable(
+                name: "empresas");
         }
     }
 }

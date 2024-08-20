@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Salpat.Clientes.Core.ClienteAggregate;
+using Salpat.Clientes.Core.EmpresaAggregate;
 using Salpat.Clientes.Core.TransaccionAggregate;
 
 namespace Salpat.Clientes.Infrastructure.Data.Config;
@@ -25,6 +26,10 @@ public class ClinteConfiguration : IEntityTypeConfiguration<Cliente>
 
     builder.HasMany<Transaccion>()
         .WithOne();
+
+     builder.HasOne<Empresa>()    
+        .WithMany()
+        .HasForeignKey(x => x.EmpresaId);
 
     builder.HasIndex(c => c.Telefono).IsUnique();
     builder.HasIndex(c => c.Email).IsUnique();

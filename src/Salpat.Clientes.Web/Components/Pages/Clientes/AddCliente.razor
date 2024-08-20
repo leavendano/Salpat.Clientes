@@ -10,6 +10,8 @@
 @using Salpat.Clientes.UseCases.Clientes.Create
 @using Salpat.Clientes.UseCases.Clientes.Get
 @using Ardalis.Result
+@using Salpat.Clientes.UseCases.Empresas
+@using Salpat.Clientes.UseCases.Empresas.List
 @inject IMediator  _mediator
 @attribute [Authorize]
 
@@ -46,6 +48,15 @@
                     <RadzenEmailValidator Component="Email" Text="Proporcione una dirección valida de correo" Style="position: absolute" />
                 </RadzenColumn>
             </RadzenRow>
+            <RadzenRow style="margin-bottom: 1rem">
+            <RadzenColumn SizeMD="3">
+                <RadzenLabel Text="Empresa" Component="DropDownEmpresa" style="width: 100%" />
+            </RadzenColumn>
+            <RadzenColumn SizeMD="9">
+                <RadzenDropDown @bind-Value="@item!.EmpresaId" Data=@empresas TextProperty="@nameof(EmpresaDTO.Nombre)" ValueProperty="Id"
+                                AllowClear=false Placeholder="Seleccione una empresa" style="display: block; width: 100%" Name="DropDownEmpresa"  />
+            </RadzenColumn>
+        </RadzenRow>
           <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
                     <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Guardar" Variant="Variant.Flat" />
                     <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancelar" Variant="Variant.Flat" Click="@CancelButtonClick"  />
@@ -61,11 +72,19 @@
         public string Nombre {get; set;} = string.Empty;
         public string Telefono {get; set;} = string.Empty;
         public string Email {get;set;} = string.Empty;
+        public int EmpresaId {get;set;}
 
     }
-    protected override void OnInitialized()
+
+    IEnumerable<EmpresaDTO>? empresas { get; set; }
+    protected override async Task OnInitializedAsync()
     {
             item ??= new();
+            var resultEmpresas = await _mediator.Send(new ListEmpresasQuery(null, null));
+        if (resultEmpresas.IsSuccess)
+        {
+            empresas = resultEmpresas.Value;
+        }
     }
     protected bool errorVisible;
     protected string mensajeAlerta = "No se guardo el registro";

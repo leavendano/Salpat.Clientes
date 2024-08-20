@@ -1,0 +1,89 @@
+@page "/add-empresa"
+@inject IJSRuntime JSRuntime
+@inject NavigationManager NavigationManager
+@inject DialogService DialogService
+@inject ContextMenuService ContextMenuService
+@inject TooltipService TooltipService
+@inject NotificationService NotificationService
+@inject ILogger<AddEmpresa> logger
+@using MediatR
+@using Salpat.Clientes.UseCases.Empresas
+@using Salpat.Clientes.UseCases.Empresas.Create
+@using Salpat.Clientes.UseCases.Empresas.Get
+@using Ardalis.Result
+@inject IMediator _mediator
+@attribute [Authorize]
+
+<PageTitle>Nueva Empresa</PageTitle>
+<RadzenColumn SizeMD=12>
+    <RadzenAlert Shade="Shade.Lighter" Variant="Variant.Flat" Size="AlertSize.Small" AlertStyle="AlertStyle.Danger" Visible="@errorVisible">@mensajeAlerta</RadzenAlert>
+    <RadzenTemplateForm TItem="EmpresaViewModel" Data="@item" Visible="@(item != null)" Submit="@FormSubmit">
+        <RadzenRow style="margin-bottom: 1rem">
+            <RadzenColumn SizeMD="3">
+                <RadzenLabel Text="Nombre" Component="nombre" style="width: 100%" />
+            </RadzenColumn>
+            <RadzenColumn SizeMD="9">
+                <RadzenTextBox style="display: block; width: 100%" @bind-Value="@item!.Nombre" Name="nombre" />
+                <RadzenRequiredValidator Component="nombre" Text="El nombre es requerido" />
+            </RadzenColumn>
+        </RadzenRow>
+        
+        <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+            <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Guardar" Variant="Variant.Flat" />
+            <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancelar" Variant="Variant.Flat" Click="@CancelButtonClick" />
+        </RadzenStack>
+    </RadzenTemplateForm>
+</RadzenColumn>
+
+@code {
+
+    protected class EmpresaViewModel
+    {
+        public string Nombre { get; set; } = string.Empty;
+        
+    }
+    protected override void OnInitialized()
+    {
+        item ??= new();
+    }
+    protected bool errorVisible;
+    protected string mensajeAlerta = "No se guardo el registro";
+    [SupplyParameterFromForm]
+    protected EmpresaViewModel item { get; set; } = new();
+
+    protected async Task FormSubmit()
+    {
+
+        try
+        {
+           
+            var result = await _mediator.Send(new CreateEmpresaCommand(item.Nombre));
+            DialogService.Close(item);
+
+        }
+        catch (Exception e)
+        {
+            NotificationService.Notify(new NotificationMessage
+                {
+                    Severity = NotificationSeverity.Error,
+                    Summary = e.Message,
+                    Detail = "Error Detail",
+                    Duration = 4000
+                });
+            mensajeAlerta = "ocurrió un error de la base de datos";
+            errorVisible = true;
+        }
+
+    }
+
+    void OnChange(string value, string name)
+    {
+        logger.LogInformation($"{name} se cambió a  {value}");
+    }
+
+    protected async Task CancelButtonClick(MouseEventArgs args)
+    {
+        await Task.Run(() => DialogService.Close(null));
+    }
+
+}

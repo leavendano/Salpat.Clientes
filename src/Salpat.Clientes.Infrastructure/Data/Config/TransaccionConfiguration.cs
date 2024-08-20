@@ -27,6 +27,7 @@ public class TransaccionConfiguration : IEntityTypeConfiguration<Transaccion>
     
 
   }
+  
 
 
 

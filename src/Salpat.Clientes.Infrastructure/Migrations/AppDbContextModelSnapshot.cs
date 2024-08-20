@@ -41,6 +41,10 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                         .HasColumnType("character varying(30)")
                         .HasColumnName("email");
 
+                    b.Property<int?>("EmpresaId")
+                        .HasColumnType("integer")
+                        .HasColumnName("empresa_id");
+
                     b.Property<int>("Estatus")
                         .HasColumnType("integer")
                         .HasColumnName("estatus");
@@ -83,6 +87,9 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                     b.HasIndex("Email")
                         .IsUnique()
                         .HasDatabaseName("ix_clientes_email");
+
+                    b.HasIndex("EmpresaId")
+                        .HasDatabaseName("ix_clientes_empresa_id");
 
                     b.HasIndex("Telefono")
                         .IsUnique()
@@ -149,6 +156,42 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                         .HasName("pk_configuraciones");
 
                     b.ToTable("configuraciones", (string)null);
+                });
+
+            modelBuilder.Entity("Salpat.Clientes.Core.EmpresaAggregate.Empresa", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasColumnName("id");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("created_at");
+
+                    b.Property<int>("Estatus")
+                        .HasColumnType("integer")
+                        .HasColumnName("estatus");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("nombre");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone")
+                        .HasColumnName("updated_at");
+
+                    b.Property<string>("Usuario")
+                        .HasColumnType("text")
+                        .HasColumnName("usuario");
+
+                    b.HasKey("Id")
+                        .HasName("pk_empresas");
+
+                    b.ToTable("empresas", (string)null);
                 });
 
             modelBuilder.Entity("Salpat.Clientes.Core.EstacionAggregate.Estacion", b =>
@@ -350,6 +393,14 @@ namespace Salpat.Clientes.Infrastructure.Migrations
                         .HasDatabaseName("ix_transacciones_estacion_id_hose_delivery_id");
 
                     b.ToTable("transacciones", (string)null);
+                });
+
+            modelBuilder.Entity("Salpat.Clientes.Core.ClienteAggregate.Cliente", b =>
+                {
+                    b.HasOne("Salpat.Clientes.Core.EmpresaAggregate.Empresa", null)
+                        .WithMany()
+                        .HasForeignKey("EmpresaId")
+                        .HasConstraintName("fk_clientes_empresas_empresa_id");
                 });
 
             modelBuilder.Entity("Salpat.Clientes.Core.TransaccionAggregate.Transaccion", b =>

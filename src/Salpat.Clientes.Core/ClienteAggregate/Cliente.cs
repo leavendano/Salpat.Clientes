@@ -6,7 +6,7 @@ using Salpat.Clientes.Core.Base;
 
 namespace Salpat.Clientes.Core.ClienteAggregate;
 
-public sealed class Cliente(string nombre, string telefono, string email) : RegisterBase, IAggregateRoot
+public sealed class Cliente(string nombre, string telefono, string email, int? empresaId = null) : RegisterBase, IAggregateRoot
 {
   // Example of validating primary constructor inputs
   // See: https://learn.microsoft.com/en-us/dotnet/csharp/whats-new/tutorials/primary-constructors#initialize-base-class
@@ -16,6 +16,8 @@ public sealed class Cliente(string nombre, string telefono, string email) : Regi
   public decimal SumaImporte { get; private set;} = 0m;
   public int PuntosGanados { get; private set; } = 0;
   public int PuntosRedimidos { get; private set;} = 0;
+
+  public int? EmpresaId {get; private set;} =empresaId;
  
   public void UpdateName(string newName)
   {

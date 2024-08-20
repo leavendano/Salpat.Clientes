@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Salpat.Clientes.Core.Base;
 using Salpat.Clientes.Core.ClienteAggregate;
 using Salpat.Clientes.Core.ConfiguracionAggregate;
+using Salpat.Clientes.Core.EmpresaAggregate;
 using Salpat.Clientes.Core.EstacionAggregate;
 using Salpat.Clientes.Core.RecompensaAgreggate;
 using Salpat.Clientes.Core.RedencionAggregate;
@@ -27,6 +28,7 @@ public class AppDbContext : DbContext
   public DbSet<Recompensa> Recompensas => Set<Recompensa>();
   public DbSet<Redencion> Redenciones => Set<Redencion>();
   public DbSet<Configuracion> Configuraciones => Set<Configuracion>();
+  public DbSet<Empresa> Empresas => Set<Empresa>();
 
   protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) 
           => optionsBuilder.UseSnakeCaseNamingConvention();

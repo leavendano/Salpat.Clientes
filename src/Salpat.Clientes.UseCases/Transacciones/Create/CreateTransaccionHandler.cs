@@ -49,7 +49,7 @@ public class CreateTransaccionHandler(IRepository<Transaccion> _repository, IRep
 
         await _repoClientes.UpdateAsync(existingCliente,cancellationToken);
         await emailSender.SendEmailAsync(existingCliente.Email,
-                                   "lealtad.salpat@gmail.com",
+                                   "Lealtad Salpat",
                                    "Acumulaste puntos con Salpat!",
                                    "",
                                    htmlmessage);

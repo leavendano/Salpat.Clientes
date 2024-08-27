@@ -35,26 +35,26 @@ builder.Host.UseSerilog((_, config) => config.ReadFrom.Configuration(builder.Con
 var microsoftLogger = new SerilogLoggerFactory(logger)
     .CreateLogger<Program>();
 
+var OpenIdAuthority = builder.Configuration["OpenId:Authority"];
+var OpenIdClientId = builder.Configuration["OpenId:ClientId"];
+var ClientSecret = builder.Configuration["OpenId:ClientSecret"];
+
 builder.Services.AddAuthentication(MS_OIDC_SCHEME)
 .AddOpenIdConnect(MS_OIDC_SCHEME, options =>
 {
     options.SignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.Authority = "https://localhost:7001/";
-    options.ClientId = "polaris_cv";
-    options.ClientSecret = "CON030626vol@";
+    options.Authority = OpenIdAuthority;
+    options.ClientId = OpenIdClientId;
+    options.ClientSecret = ClientSecret;
     options.ResponseType = "code";
-    //options.SaveTokens = true;
-    //options.GetClaimsFromUserInfoEndpoint = true;
-    //options.UseTokenLifetime = false;
-    //options.Scope.Add("openid");
-    //options.Scope.Add("profile");
-    //options.TokenValidationParameters = new TokenValidationParameters{ NameClaimType = "name" };
-    // options.CallbackPath = new PathString("/signin-oidc");
-    // options.SignedOutCallbackPath = new PathString("/signout-callback-oidc");
-    // options.RemoteSignOutPath = new PathString("/signout-oidc");
     options.MapInboundClaims = false;
+    options.SaveTokens = true;
+    options.GetClaimsFromUserInfoEndpoint = true;
+    options.Scope.Add("openid");
+    options.Scope.Add("profile");
     options.TokenValidationParameters.NameClaimType = JwtRegisteredClaimNames.Name;
     options.TokenValidationParameters.RoleClaimType = "role";
+
 
   options.Events = new OpenIdConnectEvents
   {
@@ -65,17 +65,17 @@ builder.Services.AddAuthentication(MS_OIDC_SCHEME)
       return Task.CompletedTask;
     },
 
-        OnRemoteFailure = ctx =>
-        {
-          if (ctx.Failure?.Message == "Correlation failed.")
-          {
-            ctx.Response.Redirect("/");
-            ctx.HandleResponse();
-          }
+    OnRemoteFailure = ctx =>
+    {
+      if (ctx.Failure?.Message == "Correlation failed.")
+      {
+        ctx.Response.Redirect("/");
+        ctx.HandleResponse();
+      }
 
-          return Task.CompletedTask;
-        }
-    };
+      return Task.CompletedTask;
+    }
+  };
 })
 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme);
 

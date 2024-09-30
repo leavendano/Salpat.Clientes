@@ -1,5 +1,4 @@
-﻿@page "/transacciones"
-
+﻿@page "/consultas"
 @inject IJSRuntime JSRuntime
 @inject NavigationManager NavigationManager
 @inject DialogService DialogService
@@ -7,9 +6,66 @@
 @inject TooltipService TooltipService
 @inject NotificationService NotificationService
 @inject ILogger<ListTransacciones> logger
+@using Ardalis.Result
+@using MediatR
+@using Salpat.Clientes.UseCases.Transacciones
+@using Salpat.Clientes.UseCases.Transacciones.List
+@inject IMediator  _mediator
+@attribute [Authorize]
 
-<h3>ListTransacciones</h3>
+
+
+<PageTitle>Transacciones</PageTitle>
+<RadzenStack>
+    <RadzenRow AlignItems="AlignItems.Center">
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenText Text="Transacciones" TextStyle="TextStyle.H3" TagName="TagName.H1" style="margin: 0" />
+        </RadzenColumn>
+        <RadzenColumn Size="12" SizeMD="6">
+            <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
+                 <RadzenButton Icon="add_circle_outline" Text="Nuevo" Variant="Variant.Flat" />
+            </RadzenStack>
+        </RadzenColumn>
+    </RadzenRow>
+    <RadzenRow>
+        <RadzenColumn SizeMD=12>
+            <RadzenDataGrid @ref="grid0" ColumnWidth="200px" AllowFiltering="true" FilterMode="FilterMode.Advanced" 
+                AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
+                            Data="@listado" TItem="TransaccionDTO" >
+                <Columns>
+                    <RadzenDataGridColumn TItem="TransaccionDTO" Property="HoseDeliveryId" Title="Id">
+                    </RadzenDataGridColumn>
+                    <RadzenDataGridColumn TItem="TransaccionDTO" Property="ClienteId" Title="Cliente">
+                    </RadzenDataGridColumn>
+                   
+                </Columns>
+
+            </RadzenDataGrid>
+
+        </RadzenColumn>
+    </RadzenRow>
+</RadzenStack>
 
 @code {
+
+    protected IEnumerable<TransaccionDTO>? listado;
+
+    protected RadzenDataGrid<TransaccionDTO> grid0 = new();
+    protected override async Task OnInitializedAsync()
+    {
+
+        await base.OnInitializedAsync();
+        var fechaInicial = new DateTime(DateTime.Now.Year,DateTime.Now.Month,1);
+        Result<IEnumerable<TransaccionDTO>> result = 
+            await _mediator.Send(new ListTransaccionesQuery(fechaInicial.ToUniversalTime(),DateTime.UtcNow,null, null));
+
+        if (result.IsSuccess)
+        {
+            listado = result.Value;
+        }
+
+    }
+
+   
 
 }

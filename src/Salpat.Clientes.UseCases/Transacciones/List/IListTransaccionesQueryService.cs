@@ -8,5 +8,5 @@ using Salpat.Clientes.UseCases.Clientes;
 namespace Salpat.Clientes.UseCases.Transacciones.List;
 public interface IListTransaccionesQueryService
 {
-  Task<IEnumerable<TransaccionDTO>> ListAsync();
+  Task<IEnumerable<TransaccionDTO>> ListAsync(DateTime FechaInicial, DateTime FechaFinal);
 }

@@ -1,0 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+
+namespace Salpat.Clientes.Web.Transacciones;
+
+public class ListTransaccionRequest
+{
+  public const string Route = "/Api/Transacciones";
+  [Required]
+  public DateTime FechaInicial { get; set; } = new DateTime(DateTime.Now.Year,DateTime.Now.Month,1);
+  [Required]
+  public DateTime FechaFinal { get; set; } = DateTime.Now;
+
+}

@@ -11,8 +11,7 @@ namespace Salpat.Clientes.Web.Transacciones;
 /// <remarks>
 /// Creates a new Transacion.
 /// </remarks>
-public class Create(IMediator _mediator)
-  : Endpoint<CreateTransaccionRequest, ApiResponse<CreateTransaccionResponse>>
+public class Create(IMediator _mediator) : Endpoint<CreateTransaccionRequest, ApiResponse<CreateTransaccionResponse>>
 {
   public override void Configure()
   {

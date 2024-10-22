@@ -8,4 +8,4 @@ using Ardalis.SharedKernel;
 using Salpat.Clientes.UseCases.Clientes;
 
 namespace Salpat.Clientes.UseCases.Transacciones.List; 
-public record ListTransaccionesQuery(DateTime FechaInicial,DateTime FechaFinal,int? Skip, int? Take) : IQuery<Result<IEnumerable<TransaccionDTO>>>;
+public record ListTransaccionesQuery(int? EstacionId,DateTime FechaInicial,DateTime FechaFinal,int? Skip, int? Take) : IQuery<Result<IEnumerable<TransaccionDTO>>>;

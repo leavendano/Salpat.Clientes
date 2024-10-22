@@ -8,9 +8,12 @@
 @inject ILogger<ListTransacciones> logger
 @using Ardalis.Result
 @using MediatR
+@using Salpat.Clientes.UseCases.Estaciones
+@using Salpat.Clientes.UseCases.Estaciones.List
 @using Salpat.Clientes.UseCases.Transacciones
 @using Salpat.Clientes.UseCases.Transacciones.List
 @inject IMediator  _mediator
+@inject NavigationManager _navigationManager
 @attribute [Authorize]
 
 
@@ -27,45 +30,125 @@
             </RadzenStack>
         </RadzenColumn>
     </RadzenRow>
+    <RadzenCard Variant="Variant.Outlined">
+        <RadzenRow>
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+                    <RadzenLabel Text="Estación" Component="DropDownEstaciones" style="width: 100%" class="text-md-end" />
+                    <RadzenDropDown @bind-Value=@EstacionId Data=@listadoEstaciones TextProperty="@nameof(EstacionDTO.Nombre)" ValueProperty="Id"
+                                    AllowClear=true Placeholder="Seleccione una estacion" style="display: block; width: 100%" Name="DropDownEstaciones" 
+                                    Change="@(async (args) => {EstacionId = (int?)args; await OnChange();})" />
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+                    <RadzenLabel Text="Fecha Inicial" Component="FechaInicia" style="width: 100%" class="text-md-end" />
+                    <RadzenDatePicker Name="FechaInicial" @bind-Value="FechaInicial" Change="@(async (args) => {FechaInicial = args ?? FechaInicial; await OnChange();})" />
+                </RadzenStack>
+            </RadzenColumn>
+            <RadzenColumn Size="12" SizeMD="4">
+                <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+                    <RadzenLabel Text="Fecha Final" Component="FechaFinal" style="width: 100%" class="text-md-end align-middle"/>
+                    <RadzenDatePicker Name="FechaFinal" @bind-Value="FechaFinal" Change="@(async (args) => {FechaFinal = args ?? FechaFinal; await OnChange();})"/>
+                </RadzenStack>
+            </RadzenColumn>
+        </RadzenRow>
+    </RadzenCard>
     <RadzenRow>
         <RadzenColumn SizeMD=12>
-            <RadzenDataGrid @ref="grid0" ColumnWidth="200px" AllowFiltering="true" FilterMode="FilterMode.Advanced" 
+            <RadzenDataGrid @ref="grid0" ColumnWidth="200px" AllowFiltering="true" FilterMode="FilterMode.Advanced" AllowGrouping="true" 
+                GroupPanelText="Arrastre las columnas que quiera agrupar" Group="@OnGroup"
                 AllowPaging="true" AllowSorting="true" ShowPagingSummary="true" PageSizeOptions=@(new int[]{5, 10, 20, 30})
-                            Data="@listado" TItem="TransaccionDTO" >
+                            Data="@listado" TItem="TransaccionConsultaDTO" HideGroupedColumn="true">
+                <HeaderTemplate>
+                    <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End" Gap="1rem;" Wrap="FlexWrap.Wrap">
+                        <RadzenButton Text="XLS" Icon="grid_on" Click="@(args => Export("excel"))" />
+                        <RadzenButton Text="PDF" Icon="wrap_text" Click="@(args => Export("pdf"))" />
+                    </RadzenStack>
+                </HeaderTemplate>
                 <Columns>
-                    <RadzenDataGridColumn TItem="TransaccionDTO" Property="HoseDeliveryId" Title="Id">
+                    <RadzenDataGridColumn TItem="TransaccionConsultaDTO" Property="NombreEstacion" Title="Estación" Visible=@MostrarColumnaEstacion >
                     </RadzenDataGridColumn>
-                    <RadzenDataGridColumn TItem="TransaccionDTO" Property="ClienteId" Title="Cliente">
+                    <RadzenDataGridColumn TItem="TransaccionConsultaDTO" Property="HoseDeliveryId" Title="Id" />
+                    <RadzenDataGridColumn TItem="TransaccionConsultaDTO" Property="Fecha" Title="Fecha" />
+                    <RadzenDataGridColumn TItem="TransaccionConsultaDTO" Property="NombreCliente" Title="Cliente" />
+                    <RadzenDataGridColumn TItem="TransaccionConsultaDTO" Property="NombreProducto" Title="Producto" />
+                    <RadzenDataGridColumn TItem="TransaccionConsultaDTO" Property="Importe" Title="Importe" TextAlign="TextAlign.Right" FormatString="{0:C2}">
+                        <FooterTemplate>
+                            <b>@String.Format(new System.Globalization.CultureInfo("es-MX"), "{0:C}", listado.Sum(o => o.Importe))</b>
+                        </FooterTemplate>
+                        <GroupFooterTemplate>
+                            <b>@String.Format(new System.Globalization.CultureInfo("es-MX"), "{0:C}", context.Data.Items.Cast<TransaccionConsultaDTO>().Sum(o => o.Importe))</b>
+                        </GroupFooterTemplate>
                     </RadzenDataGridColumn>
-                   
+                    <RadzenDataGridColumn TItem="TransaccionConsultaDTO" Property="Volumen" Title="Volumen" TextAlign="TextAlign.Right" FormatString="{0:0.000}">
+                        <FooterTemplate>
+                            <b>@String.Format(new System.Globalization.CultureInfo("es-MX"), "{0:0.000}", listado.Sum(o => o.Volumen))</b>
+                        </FooterTemplate>
+                        <GroupFooterTemplate>
+                            <b>@String.Format(new System.Globalization.CultureInfo("es-MX"), "{0:0.000}", context.Data.Items.Cast<TransaccionConsultaDTO>().Sum(o => o.Volumen))</b>
+                        </GroupFooterTemplate>
+                    </RadzenDataGridColumn>
                 </Columns>
-
             </RadzenDataGrid>
-
         </RadzenColumn>
     </RadzenRow>
 </RadzenStack>
 
 @code {
 
-    protected IEnumerable<TransaccionDTO>? listado;
+    protected IEnumerable<TransaccionConsultaDTO> listado = [];
+    protected IEnumerable<EstacionDTO>? listadoEstaciones {get; set;}
+    protected DateTime FechaInicial {get;set;} = new DateTime(DateTime.Now.Year,DateTime.Now.Month - 5,1);
+    protected DateTime FechaFinal {get; set;} = DateTime.Now;
+    protected int? EstacionId {get; set;}
+    protected bool MostrarColumnaEstacion {get; set;} = true;
 
-    protected RadzenDataGrid<TransaccionDTO> grid0 = new();
+    protected RadzenDataGrid<TransaccionConsultaDTO> grid0 = new();
     protected override async Task OnInitializedAsync()
     {
 
         await base.OnInitializedAsync();
-        var fechaInicial = new DateTime(DateTime.Now.Year,DateTime.Now.Month,1);
-        Result<IEnumerable<TransaccionDTO>> result = 
-            await _mediator.Send(new ListTransaccionesQuery(fechaInicial.ToUniversalTime(),DateTime.UtcNow,null, null));
+        
+        Result<IEnumerable<TransaccionConsultaDTO>> result = 
+            await _mediator.Send(new ListTransaccionesConsultaQuery(null,FechaInicial.ToUniversalTime(),FechaFinal.ToUniversalTime(),null, null));
 
         if (result.IsSuccess)
         {
             listado = result.Value;
         }
 
+         Result<IEnumerable<EstacionDTO>> resultEstacion = 
+            await _mediator.Send(new ListEstacionesQuery(null, null));
+        if(resultEstacion.IsSuccess)
+        {
+            listadoEstaciones = resultEstacion.Value;
+        } 
+
     }
 
-   
+   protected async Task OnChange()
+    {
+        MostrarColumnaEstacion = EstacionId is null;
+        Result<IEnumerable<TransaccionConsultaDTO>> result = 
+            await _mediator.Send(new ListTransaccionesConsultaQuery(EstacionId,FechaInicial.ToUniversalTime(),FechaFinal.ToUniversalTime(),null, null));
+
+        if (result.IsSuccess)
+        {
+            listado = result.Value;
+            await grid0.Reload();
+        }
+    }
+
+    void OnGroup(DataGridColumnGroupEventArgs<TransaccionConsultaDTO> args)
+    {
+        logger.LogInformation($"DataGrid {(args.GroupDescriptor != null ? "grouped" : "ungrouped")} by {args.Column.GetGroupProperty()}");
+    }
+
+    public void Export(string type)
+    {
+
+        _navigationManager.NavigateTo($"/Api/Transacciones?EstacionId=2&FechaInicial=2024-01-01&FechaFinal=2024-12-31", true);
+    }
 
 }

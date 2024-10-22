@@ -7,7 +7,7 @@ public class ListTransaccionesHandler(IListTransaccionesQueryService _query) : I
 {
   public async Task<Result<IEnumerable<TransaccionDTO>>> Handle(ListTransaccionesQuery request, CancellationToken cancellationToken)
   {
-    var result = await _query.ListAsync(request.FechaInicial,request.FechaFinal);
+    var result = await _query.ListAsync(request.EstacionId,request.FechaInicial,request.FechaFinal);
 
     return Result.Success(result);
   }

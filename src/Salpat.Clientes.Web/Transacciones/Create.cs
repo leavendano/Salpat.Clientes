@@ -23,9 +23,7 @@ public class Create(IMediator _mediator) : Endpoint<CreateTransaccionRequest, Ap
     });
   }
    
-  public override async Task HandleAsync(
-    CreateTransaccionRequest request,
-    CancellationToken cancellationToken)
+  public override async Task HandleAsync(CreateTransaccionRequest request,CancellationToken cancellationToken)
   {
     var result = await _mediator.Send(new CreateTransaccionCommand(request.HoseDeliveryId,
       request.ClienteId,request.EstacionId,request.Posicion,request.Fecha,request.Importe

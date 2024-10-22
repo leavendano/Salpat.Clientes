@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Salpat.Clientes.UseCases.Clientes;
+﻿using Ardalis.Result;
+
 
 namespace Salpat.Clientes.UseCases.Transacciones.List;
-public interface IListTransaccionesQueryService
+public interface IListTransaccionesQueryService : IDisposable
 {
-  Task<IEnumerable<TransaccionDTO>> ListAsync();
+  Task<IEnumerable<TransaccionDTO>> ListAsync(int? EstacionId,DateTime? FechaInicial, DateTime? FechaFinal);
+
+  Task<IEnumerable<TransaccionConsultaDTO>> ListConsultaAsync(int? EstacionId,DateTime? FechaInicial, DateTime? FechaFinal);
+
+  Task<Result<ExportResponseDTO>> ExportAsync(int? EstacionId,DateTime? FechaInicial, DateTime? FechaFinal);
 }

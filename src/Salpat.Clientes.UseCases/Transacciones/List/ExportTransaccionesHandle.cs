@@ -8,7 +8,7 @@ public class ExportTransaccionesHandle(IListTransaccionesQueryService _query) : 
 {
   public async Task<Result<ExportResponseDTO>> Handle(ExportTransaccionesQuery request, CancellationToken cancellationToken)
   {
-    var result = await _query.ExportAsync(request.EstacionId,request.FechaInicial,request.FechaFinal);
+    var result = await _query.ExportAsync(request.Tipo,request.EstacionId,request.FechaInicial,request.FechaFinal);
 
     return result;
   }

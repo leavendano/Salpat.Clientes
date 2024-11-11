@@ -62,8 +62,8 @@
                             Data="@listado" TItem="TransaccionConsultaDTO" HideGroupedColumn="true">
                 <HeaderTemplate>
                     <RadzenStack Orientation="Orientation.Horizontal" AlignItems="AlignItems.End" Gap="1rem;" Wrap="FlexWrap.Wrap">
-                        <RadzenButton Text="XLS" Icon="grid_on" Click="@(args => Export("excel"))" />
-                        <RadzenButton Text="PDF" Icon="wrap_text" Click="@(args => Export("pdf"))" />
+                        <RadzenButton Text="XLS" Icon="grid_on" Click="@(args => Export("EXCEL"))" />
+                        <RadzenButton Text="PDF" Icon="wrap_text" Click="@(args => Export("PDF"))" />
                     </RadzenStack>
                 </HeaderTemplate>
                 <Columns>
@@ -99,7 +99,7 @@
 
     protected IEnumerable<TransaccionConsultaDTO> listado = [];
     protected IEnumerable<EstacionDTO>? listadoEstaciones {get; set;}
-    protected DateTime FechaInicial {get;set;} = new DateTime(DateTime.Now.Year,DateTime.Now.Month - 5,1);
+    protected DateTime FechaInicial {get;set;} = new DateTime(DateTime.Now.Year,DateTime.Now.Month,1);
     protected DateTime FechaFinal {get; set;} = DateTime.Now;
     protected int? EstacionId {get; set;}
     protected bool MostrarColumnaEstacion {get; set;} = true;
@@ -147,8 +147,9 @@
 
     public void Export(string type)
     {
+        
 
-        _navigationManager.NavigateTo($"/Api/Transacciones?EstacionId=2&FechaInicial=2024-01-01&FechaFinal=2024-12-31", true);
+        _navigationManager.NavigateTo($"/Api/Transacciones?Tipo={type}&FechaInicial=2024-01-01&FechaFinal=2024-12-31", true);
     }
 
 }

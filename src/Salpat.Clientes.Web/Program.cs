@@ -18,6 +18,7 @@ using Salpat.Clientes.Web;
 using System.IdentityModel.Tokens.Jwt;
 using Salpat.Clientes.UseCases.Clientes.Create;
 using Salpat.Clientes.Core.ClienteAggregate;
+using Salpat.Clientes.Core.Base;
 
 
 const string MS_OIDC_SCHEME = "MicrosoftOidc";
@@ -126,6 +127,11 @@ else
   builder.Services.AddScoped<IEmailSender, MimeKitEmailSender>();
 }
 
+if (builder.Environment.IsStaging())
+{
+    builder.WebHost.UseStaticWebAssets();
+}
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -139,8 +145,17 @@ else
   app.UseHsts();
 }
 
-app.UseFastEndpoints()
-    .UseSwaggerGen(); // Includes AddFileServer and static files middleware
+app.UseFastEndpoints(c =>
+{
+    c.Errors.ResponseBuilder = (failures, ctx, statusCode) =>
+    {
+        return new ApiResponse<object>
+        {
+           Success = false,
+           Error = failures.First().ErrorMessage
+        };
+    };
+}).UseSwaggerGen(); // Includes AddFileServer and static files middleware
 
 app.UseHttpsRedirection();
 app.MapControllers();

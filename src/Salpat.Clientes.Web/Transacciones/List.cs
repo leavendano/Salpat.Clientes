@@ -22,7 +22,7 @@ public class List(IMediator _mediator,ILogger<List> _logger) : Endpoint<ListTran
     
     public override async Task HandleAsync( ListTransaccionRequest request, CancellationToken cancellationToken)
   {
-    var result = await _mediator.Send(new ExportTransaccionesQuery(request.EstacionId,request.FechaInicial.ToUniversalTime(),
+    var result = await _mediator.Send(new ExportTransaccionesQuery(request.Tipo,request.EstacionId,request.FechaInicial.ToUniversalTime(),
     request.FechaFinal.ToUniversalTime(),null, null), cancellationToken);
     _logger.LogInformation($"Fecha Inicial {request.FechaInicial.ToUniversalTime()},Fecha final  {request.FechaFinal.ToLocalTime()}");
     await SendBytesAsync(result.Value.StreamContent, result.Value.FileName, "application/octet-stream", cancellation: cancellationToken);

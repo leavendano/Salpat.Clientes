@@ -38,7 +38,7 @@ public class CreateTransaccionHandler(IRepository<Transaccion> _repository, IRep
             break;
         }
         htmlmessage = htmlmessage.Replace("{{nombre_cliente}}",existingCliente.Nombre);
-        htmlmessage = htmlmessage.Replace("{{nombre_estacion}}", "Periferico");
+        htmlmessage = htmlmessage.Replace("{{nombre_estacion}}", request.NombreEstacion);
         htmlmessage = htmlmessage.Replace("{{posicion_venta}}",request.Posicion.ToString());
         htmlmessage = htmlmessage.Replace("{{fecha_venta}}",request.Fecha.ToString());
         htmlmessage = htmlmessage.Replace("{{folio_venta}}",request.HoseDeliveryId.ToString());

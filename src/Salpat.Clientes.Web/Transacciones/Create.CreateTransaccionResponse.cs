@@ -1,7 +1,7 @@
 ﻿namespace Salpat.Clientes.Web.Transacciones;
 
 public class CreateTransaccionResponse(int hoseDeliveryId, int clienteId, DateTime fecha,
-  int productoId, decimal importe, decimal volumen, int puntos)
+  int productoId, decimal importe, decimal volumen, int puntos,string nombreEstacion)
 {
   public int HoseDeliveryId { get; set; } = hoseDeliveryId;
   public int ClienteId { get; set; } = clienteId;
@@ -10,4 +10,5 @@ public class CreateTransaccionResponse(int hoseDeliveryId, int clienteId, DateTi
   public decimal Importe { get; set;} = importe;
   public decimal Volumen { get; set; } = volumen;
   public int Puntos { get; set; } = puntos;
+  public string NombreEstacion { get; set; } = nombreEstacion;
 }

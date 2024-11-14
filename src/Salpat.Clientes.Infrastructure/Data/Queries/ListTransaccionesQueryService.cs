@@ -11,15 +11,16 @@ namespace Salpat.Clientes.Infrastructure.Data.Queries;
 public class ListTransaccionesQueryService(AppDbContext _db,IHttpClientFactory _httpClient) : IListTransaccionesQueryService
 {
   
-  public async Task<IEnumerable<TransaccionDTO>> ListAsync(int? EstacionId,DateTime? FechaInicial, DateTime? Fechafinal)
+  public async Task<IEnumerable<TransaccionDTO>> ListAsync(int? EstacionId,DateTime? FechaInicial, DateTime? Fechafinal,int? ClienteId)
   {
     var result = await _db.Database.SqlQuery<TransaccionDTO>(
-      $@"SELECT id,t.estacion_id, t.hose_delivery_id, t.fecha,t.posicion,t.producto_id, t.importe, t.volumen, t.cliente_id, t.puntos 
+      $@"SELECT t.id,t.estacion_id, t.hose_delivery_id, t.fecha,t.posicion,t.producto_id, t.importe, t.volumen, t.cliente_id, t.puntos 
           FROM transacciones t
           WHERE 1= 1 
           and ( {FechaInicial} is null or fecha >= {FechaInicial}) 
           and ( {Fechafinal} is null or fecha <= {Fechafinal})
-          and  ({EstacionId}::int is null or estacion_id = {EstacionId})")
+          and  ({EstacionId}::int is null or estacion_id = {EstacionId})
+          and  ({ClienteId}::int is null or cliente_id = {ClienteId})")
       .ToListAsync();
 
     return result;
@@ -46,7 +47,7 @@ public class ListTransaccionesQueryService(AppDbContext _db,IHttpClientFactory _
   }
 
 
-  public async Task<Result<ExportResponseDTO>> ExportAsync(int? EstacionId,DateTime? FechaInicial, DateTime? Fechafinal)
+  public async Task<Result<ExportResponseDTO>> ExportAsync(string Tipo,int? EstacionId,DateTime? FechaInicial, DateTime? Fechafinal)
   {
     var result = await _db.Database.SqlQuery<TransaccionConsultaDTO>(
       $@"SELECT t.id,t.estacion_id, s.nombre as nombre_estacion, t.hose_delivery_id, t.fecha,t.posicion,t.producto_id , t.importe, t.volumen,
@@ -63,53 +64,50 @@ public class ListTransaccionesQueryService(AppDbContext _db,IHttpClientFactory _
       .ToListAsync();
 
       string rootpath = System.IO.Path.Combine(System.IO.Directory.GetCurrentDirectory(), "wwwroot");
-      Byte[] bytes = File.ReadAllBytes(rootpath + "/Islas.rdlc");
+      Byte[] bytes = File.ReadAllBytes(rootpath + "/Transacciones.rdlc");
       String fileRdlc = Convert.ToBase64String(bytes);
       IEnumerable<ParamDTO> parametros = new List<ParamDTO>(){
-          new ParamDTO("NombreEstacionParameter","Gasolineras y servicio Marfil"),
-          new ParamDTO("NombreSucursalParameter","Sucursal Tapachula") 
+          new ParamDTO("NombreEstacionParameter","Grupo Salpat"),
+          new ParamDTO("NombreSucursalParameter","    ") 
       };
       
-      IEnumerable<IslaDTO> datos1 =   new List<IslaDTO>(){
-        new IslaDTO(1,1,"Isla 1"),
-        new IslaDTO(1,2,"Isla 2")
-      };
+     
       
       IEnumerable<ExportData> exportData = new List<ExportData>(){
-        new ExportData( "Islas",datos1)
+        new ExportData( "Transacciones",result)
       };
-      ExportServiceRequest dataRequest = new ExportServiceRequest("Transacciones","PDF", fileRdlc, parametros, exportData);
+      ExportServiceRequest dataRequest = new ExportServiceRequest("Transacciones",Tipo, fileRdlc, parametros, exportData);
       try
         {
           string url = "http://localhost:5000";
-          var client = _httpClient.CreateClient("EcsAPI");
-          HttpRequestMessage message = new HttpRequestMessage();
-          message.Headers.Add("Accept", "application/json");
-          message.RequestUri = new Uri(url + $"/report");
-          client.DefaultRequestHeaders.Clear();
-          var jsonText = JsonSerializer.Serialize(dataRequest);
-          message.Content = new StringContent(jsonText, Encoding.UTF8, "application/json");
-          message.Method = HttpMethod.Post;
-          
-          var apiResponse = await client.SendAsync(message);
-          apiResponse.EnsureSuccessStatusCode();
-          var apiContent = await apiResponse.Content.ReadAsByteArrayAsync();
+      using var client = _httpClient.CreateClient("ReportAPI");
+      HttpRequestMessage message = new HttpRequestMessage();
+      message.Headers.Add("Accept", "application/json");
+      message.RequestUri = new Uri(url + $"/report");
+      client.DefaultRequestHeaders.Clear();
+      var jsonText = JsonSerializer.Serialize(dataRequest);
+      message.Content = new StringContent(jsonText, Encoding.UTF8, "application/json");
+      message.Method = HttpMethod.Post;
 
-          var filename = apiResponse?.Content?.Headers?.ContentDisposition?.FileName;
-          if (!string.IsNullOrEmpty(filename))
-          {
-              return Result.Success( new ExportResponseDTO(filename,apiContent));
-              
-          }
-          else
-          {
-              return Result.Error("No se logró optener el archivo");
-          }
-        }
-        catch (Exception e)
-        {
-          return Result.Error(e.Message);
-        }
+      var apiResponse = await client.SendAsync(message);
+      apiResponse.EnsureSuccessStatusCode();
+      var apiContent = await apiResponse.Content.ReadAsByteArrayAsync();
+
+      var filename = apiResponse?.Content?.Headers?.ContentDisposition?.FileName;
+      if (!string.IsNullOrEmpty(filename))
+      {
+        return Result.Success(new ExportResponseDTO(filename, apiContent));
+
+      }
+      else
+      {
+        return Result.Error("No se logró optener el archivo");
+      }
+    }
+    catch (Exception e)
+    {
+      return Result.Error(e.Message);
+    }
 
   }
 

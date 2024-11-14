@@ -4,6 +4,7 @@ namespace Salpat.Clientes.Web.Transacciones;
 
 public class ListTransaccionRequest
 {
+  public string Tipo { get; set; } = "PDF";
   public int? EstacionId { get; set; }
   public const string Route = "/Api/Transacciones";
   [Required]

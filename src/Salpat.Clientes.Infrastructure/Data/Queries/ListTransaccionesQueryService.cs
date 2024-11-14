@@ -14,7 +14,7 @@ public class ListTransaccionesQueryService(AppDbContext _db,IHttpClientFactory _
   public async Task<IEnumerable<TransaccionDTO>> ListAsync(int? EstacionId,DateTime? FechaInicial, DateTime? Fechafinal,int? ClienteId)
   {
     var result = await _db.Database.SqlQuery<TransaccionDTO>(
-      $@"SELECT id,t.estacion_id, t.hose_delivery_id, t.fecha,t.posicion,t.producto_id, t.importe, t.volumen, t.cliente_id, t.puntos 
+      $@"SELECT t.id,t.estacion_id, t.hose_delivery_id, t.fecha,t.posicion,t.producto_id, t.importe, t.volumen, t.cliente_id, t.puntos 
           FROM transacciones t
           WHERE 1= 1 
           and ( {FechaInicial} is null or fecha >= {FechaInicial}) 

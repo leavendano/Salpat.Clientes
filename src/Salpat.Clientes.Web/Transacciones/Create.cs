@@ -3,6 +3,7 @@ using FastEndpoints;
 using MediatR;
 using Salpat.Clientes.Core.Base;
 using Salpat.Clientes.UseCases.Transacciones.List;
+using Salpat.Clientes.UseCases.Estaciones.Get;
 
 namespace Salpat.Clientes.Web.Transacciones;
 
@@ -32,9 +33,14 @@ public class Create(IMediator _mediator, IConfiguration _configuration) : Endpoi
 
     if(resultPrevio.Value.Count() == 0)
     {
-
+      var resultEstacion = await _mediator.Send(new GetEstacionQuery(request.EstacionId));
+      if(!resultEstacion.IsSuccess)
+      {
+        
+        ThrowError("No se encuentra ese número de estación");
+      }
       var result = await _mediator.Send(new CreateTransaccionCommand(request.HoseDeliveryId,
-        request.ClienteId,request.EstacionId,request.Posicion,request.Fecha,request.Importe
+        request.ClienteId,request.EstacionId,resultEstacion.Value.Nombre,request.Posicion,request.Fecha,request.Importe
         ,request.Volumen,request.ProductoId,(int)request.Importe), cancellationToken);
     
       if (result.IsSuccess)
@@ -46,7 +52,8 @@ public class Create(IMediator _mediator, IConfiguration _configuration) : Endpoi
           Data = new List<CreateTransaccionResponse>()
           {
             new CreateTransaccionResponse( result.Value.HoseDeliveryId,
-            result.Value.ClienteId,result.Value.Fecha,result.Value.ProductoId,result.Value.Importe,result.Value.Volumen,result.Value.Puntos)
+            result.Value.ClienteId,result.Value.Fecha,result.Value.ProductoId,result.Value.Importe,result.Value.Volumen,
+            result.Value.Puntos,resultEstacion.Value.Nombre)
           }
         };
         return;

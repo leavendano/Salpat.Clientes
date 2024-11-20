@@ -73,7 +73,10 @@
                     <RadzenDataGridColumn TItem="TransaccionConsultaDTO" Property="Fecha" Title="Fecha" />
                     <RadzenDataGridColumn TItem="TransaccionConsultaDTO" Property="NombreCliente" Title="Cliente" />
                     <RadzenDataGridColumn TItem="TransaccionConsultaDTO" Property="NombreProducto" Title="Producto" />
-                    <RadzenDataGridColumn TItem="TransaccionConsultaDTO" Property="Importe" Title="Importe" TextAlign="TextAlign.Right" FormatString="{0:C2}">
+                    <RadzenDataGridColumn TItem="TransaccionConsultaDTO" Property="Importe" Title="Importe" TextAlign="TextAlign.Right">
+                        <Template>
+                            @String.Format(new System.Globalization.CultureInfo("es-MX"), "{0:C}", context.Importe)
+                        </Template>
                         <FooterTemplate>
                             <b>@String.Format(new System.Globalization.CultureInfo("es-MX"), "{0:C}", listado.Sum(o => o.Importe))</b>
                         </FooterTemplate>

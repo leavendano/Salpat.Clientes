@@ -32,6 +32,7 @@ logger.Information("Starting web host");
 var builder = WebApplication.CreateBuilder(args);
 
 
+
 builder.Host.UseSerilog((_, config) => config.ReadFrom.Configuration(builder.Configuration));
 var microsoftLogger = new SerilogLoggerFactory(logger)
     .CreateLogger<Program>();
@@ -132,6 +133,23 @@ if (builder.Environment.IsStaging())
     builder.WebHost.UseStaticWebAssets();
 }
 
+
+/* --> Uncomment to enable localization
+var supportedCultures = new[]
+{
+    new System.Globalization.CultureInfo("es-MX"),
+};
+
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("es-MX");
+    options.SupportedCultures = supportedCultures;
+    options.SupportedUICultures = supportedCultures;
+});
+*/
+
+builder.Services.AddBrowserTimeProvider();
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -156,6 +174,18 @@ app.UseFastEndpoints(c =>
         };
     };
 }).UseSwaggerGen(); // Includes AddFileServer and static files middleware
+
+
+/* --> Uncomment to enable localization
+app.UseRequestLocalization(new RequestLocalizationOptions
+{
+    DefaultRequestCulture = new Microsoft.AspNetCore.Localization.RequestCulture("es-MX"),
+    SupportedCultures = supportedCultures,
+    SupportedUICultures = supportedCultures
+});
+*/
+
+
 
 app.UseHttpsRedirection();
 app.MapControllers();

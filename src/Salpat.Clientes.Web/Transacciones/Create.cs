@@ -72,7 +72,7 @@ public class Create(IMediator _mediator, IConfiguration _configuration) : Endpoi
       Response = new ApiResponse<CreateTransaccionResponse>
       {
         Success = false,
-        Error = "Existe un movimiento antes de las 12hrs del mismo cliente"
+        Error = $"Existe un movimiento antes de las {limiteHoras}hrs del mismo cliente"
       };
     }
     

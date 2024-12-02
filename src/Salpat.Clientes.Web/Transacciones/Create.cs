@@ -28,6 +28,11 @@ public class Create(IMediator _mediator, IConfiguration _configuration) : Endpoi
   public override async Task HandleAsync(CreateTransaccionRequest request,CancellationToken cancellationToken)
   {
     int limiteHoras  = _configuration.GetValue<int>("BsRules:MinHoursNewRecord");
+    int minutos = -1 * _configuration.GetValue<int>("BsRules:MaxMinutesRegister");
+    if(request.Fecha <= DateTime.Now.AddMinutes(minutos) )
+    {
+      ThrowError("La fecha debe ser mayor que " + DateTime.Now.AddMinutes(minutos).ToString());
+    }
     var resultPrevio = await _mediator.Send( new ListTransaccionesQuery(request.EstacionId,request.Fecha.AddHours(-1 * limiteHoras),
         request.Fecha,request.ClienteId, null, null));
 
@@ -72,7 +77,7 @@ public class Create(IMediator _mediator, IConfiguration _configuration) : Endpoi
       Response = new ApiResponse<CreateTransaccionResponse>
       {
         Success = false,
-        Error = "Existe un movimiento antes de las 12hrs del mismo cliente"
+        Error = $"Existe un movimiento antes de las {limiteHoras}hrs del mismo cliente"
       };
     }
     

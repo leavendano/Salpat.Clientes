@@ -49,14 +49,14 @@
                 </RadzenColumn>
             </RadzenRow>
             <RadzenRow style="margin-bottom: 1rem">
-            <RadzenColumn SizeMD="3">
-                <RadzenLabel Text="Empresa" Component="DropDownEmpresa" style="width: 100%" />
-            </RadzenColumn>
-            <RadzenColumn SizeMD="9">
-                <RadzenDropDown @bind-Value="@item!.EmpresaId" Data=@empresas TextProperty="@nameof(EmpresaDTO.Nombre)" ValueProperty="Id"
-                                AllowClear=false Placeholder="Seleccione una empresa" style="display: block; width: 100%" Name="DropDownEmpresa"  />
-            </RadzenColumn>
-        </RadzenRow>
+                <RadzenColumn SizeMD="3">
+                    <RadzenLabel Text="Empresa" Component="DropDownEmpresa" style="width: 100%" />
+                </RadzenColumn>
+                <RadzenColumn SizeMD="9">
+                    <RadzenDropDown @bind-Value="@item!.EmpresaId" Data=@empresas TextProperty="@nameof(EmpresaDTO.Nombre)" ValueProperty="Id"
+                                    AllowClear=false Placeholder="Seleccione una empresa" style="display: block; width: 100%" Name="DropDownEmpresa"  />
+                </RadzenColumn>
+            </RadzenRow>
           <RadzenStack  Orientation="Orientation.Horizontal" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Gap="0.5rem">
                     <RadzenButton ButtonStyle="ButtonStyle.Primary" ButtonType="ButtonType.Submit" Icon="save" Text="Guardar" Variant="Variant.Flat" />
                     <RadzenButton ButtonStyle="ButtonStyle.Light" Text="Cancelar" Variant="Variant.Flat" Click="@CancelButtonClick"  />

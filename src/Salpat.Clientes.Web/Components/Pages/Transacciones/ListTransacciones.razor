@@ -150,9 +150,9 @@
 
     public void Export(string type)
     {
-        
+        logger.LogInformation($"Fecha inicial {FechaInicial}, Fecha Final {FechaFinal}");
 
-        _navigationManager.NavigateTo($"/Api/Transacciones?Tipo={type}&FechaInicial=2024-01-01&FechaFinal=2024-12-31", true);
+        _navigationManager.NavigateTo($"/Api/Transacciones?Tipo={type}&FechaInicial={FechaInicial}&FechaFinal={FechaFinal}", true);
     }
 
 }
